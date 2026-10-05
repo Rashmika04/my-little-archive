@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add to Archive — My Little Archive</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+<main class="page admin-page">
+
+
+    <!-- =================================
+         HEADER
+         ================================= -->
+
+    <header class="room-header">
+
+        <a
+            href="index.html"
+            class="back-link"
+        >
+            ← My Little Archive
+        </a>
+
+        <p class="eyebrow">
+            ARCHIVE DESK · ADD SOMETHING
+        </p>
+
+        <h1>Add</h1>
+
+        <p class="room-intro">
+            Add something to your little archive.
+        </p>
+
+    </header>
+
+
+
+    <!-- =================================
+         COLLECTION TYPE
+         ================================= -->
+
+    <section class="admin-section">
+
+        <p class="section-label">
+            WHAT ARE YOU ADDING?
+        </p>
+
+
+        <div class="add-type-grid">
+
+            <button
+                class="add-type active"
+                type="button"
+            >
+                <span>🎞</span>
+                <strong>Watch</strong>
+                <small>Movies · Series · Dramas</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>📚</span>
+                <strong>Read</strong>
+                <small>Books · Manga · Manhwa</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>📜</span>
+                <strong>Write</strong>
+                <small>Poems · Fragments · Drafts</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>🎵</span>
+                <strong>Listen</strong>
+                <small>Songs · Albums · Playlists</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>🎨</span>
+                <strong>Art</strong>
+                <small>Art · Photography · Artists</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>💭</span>
+                <strong>Quotes</strong>
+                <small>Words that stayed</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>❤️</span>
+                <strong>Love</strong>
+                <small>Thoughts · Wants · Expectations</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>🗺</span>
+                <strong>Must Visit</strong>
+                <small>Places · Cities · Corners</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>🗂</span>
+                <strong>Keepsake</strong>
+                <small>Photos · Tickets · Memories</small>
+            </button>
+
+
+            <button
+                class="add-type"
+                type="button"
+            >
+                <span>🔖</span>
+                <strong>Recommendation</strong>
+                <small>Things people recommended</small>
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================
+         FIND A MOVIE
+         ================================= -->
+
+    <section class="admin-section">
+
+        <p class="section-label">
+            FIND A MOVIE
+        </p>
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="movie-search"
+                placeholder="Search for a movie..."
+                autocomplete="off"
+            >
+
+
+            <button
+                type="button"
+                class="search-button"
+                id="search-button"
+            >
+                Search
+            </button>
+
+        </div>
+
+
+        <p class="field-note">
+            Search will automatically find the movie information
+            and poster for you.
+        </p>
+
+
+        <!--
+            THIS MESSAGE WILL TELL US
+            EXACTLY WHAT THE SEARCH IS DOING.
+        -->
+
+        <div
+            id="search-status"
+            class="field-note"
+            style="
+                margin-top: 12px;
+                min-height: 20px;
+            "
+        ></div>
+
+    </section>
+
+
+
+    <!-- =================================
+         SEARCH RESULTS
+         ================================= -->
+
+    <section
+        class="admin-section"
+        id="search-results-section"
+    >
+
+        <p class="section-label">
+            SEARCH RESULTS
+        </p>
+
+
+        <div id="search-results">
+
+            <div class="empty-search">
+
+                <span>🎞</span>
+
+                <p>
+                    Search for a movie to see matching results here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================
+         YOUR DETAILS
+         ================================= -->
+
+    <section class="admin-section">
+
+        <p class="section-label">
+            YOUR DETAILS
+        </p>
+
+
+        <div class="admin-form">
+
+
+            <!-- TITLE -->
+
+            <div class="form-field">
+
+                <label for="movie-title">
+                    TITLE
+                </label>
+
+                <input
+                    type="text"
+                    id="movie-title"
+                    placeholder="Movie title"
+                >
+
+            </div>
+
+
+
+            <!-- YEAR + TYPE -->
+
+            <div class="form-row">
+
+                <div class="form-field">
+
+                    <label for="movie-year">
+                        YEAR
+                    </label>
+
+                    <input
+                        type="text"
+                        id="movie-year"
+                        placeholder="Year"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="movie-type">
+                        TYPE
+                    </label>
+
+                    <input
+                        type="text"
+                        id="movie-type"
+                        placeholder="Movie / Series"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- DIRECTOR -->
+
+            <div class="form-field">
+
+                <label for="movie-director">
+                    DIRECTOR
+                </label>
+
+                <input
+                    type="text"
+                    id="movie-director"
+                    placeholder="Director"
+                >
+
+            </div>
+
+
+
+            <!-- LANGUAGE + COUNTRY -->
+
+            <div class="form-row">
+
+                <div class="form-field">
+
+                    <label for="movie-language">
+                        LANGUAGE
+                    </label>
+
+                    <input
+                        type="text"
+                        id="movie-language"
+                        placeholder="English"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="movie-country">
+                        COUNTRY
+                    </label>
+
+                    <input
+                        type="text"
+                        id="movie-country"
+                        placeholder="United Kingdom"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- GENRES -->
+
+            <div class="form-field">
+
+                <label for="movie-genres">
+                    GENRES
+                </label>
+
+                <input
+                    type="text"
+                    id="movie-genres"
+                    placeholder="Romance, Drama, Historical..."
+                >
+
+                <small class="input-help">
+                    Automatically filled from the movie database.
+                    You can edit it.
+                </small>
+
+            </div>
+
+
+
+            <!-- RELATIONSHIP -->
+
+            <div class="form-field">
+
+                <label for="relationship">
+                    RELATIONSHIP / REPRESENTATION
+                </label>
+
+                <select id="relationship">
+
+                    <option value="">
+                        Choose
+                    </option>
+
+                    <option value="M/F">
+                        M/F
+                    </option>
+
+                    <option value="F/F · GL">
+                        F/F · GL
+                    </option>
+
+                    <option value="M/M · BL">
+                        M/M · BL
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+                <small class="input-help">
+                    This is separate from genre.
+                </small>
+
+            </div>
+
+
+
+            <!-- STATUS + RATING -->
+
+            <div class="form-row">
+
+                <div class="form-field">
+
+                    <label for="movie-status">
+                        STATUS
+                    </label>
+
+                    <select id="movie-status">
+
+                        <option value="want">
+                            Want to Watch
+                        </option>
+
+                        <option value="watching">
+                            Watching
+                        </option>
+
+                        <option value="watched">
+                            Watched
+                        </option>
+
+                        <option value="abandoned">
+                            Abandoned
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="rating">
+                        RATING
+                    </label>
+
+                    <select id="rating">
+
+                        <option value="">
+                            Not rated
+                        </option>
+
+                        <option value="10">10 / 10</option>
+                        <option value="9">9 / 10</option>
+                        <option value="8">8 / 10</option>
+                        <option value="7">7 / 10</option>
+                        <option value="6">6 / 10</option>
+                        <option value="5">5 / 10</option>
+                        <option value="4">4 / 10</option>
+                        <option value="3">3 / 10</option>
+                        <option value="2">2 / 10</option>
+                        <option value="1">1 / 10</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- WATCHED -->
+
+            <label class="check-field">
+
+                <input
+                    type="checkbox"
+                    id="watched"
+                >
+
+                <span class="check-box"></span>
+
+                <span>
+
+                    <strong>
+                        I have watched this
+                    </strong>
+
+                    <small>
+                        Mark this movie as watched
+                    </small>
+
+                </span>
+
+            </label>
+
+
+
+            <!-- WATCHED DATE -->
+
+            <div
+                class="form-field hidden-field"
+                id="watched-date-field"
+            >
+
+                <label for="watched-date">
+                    DATE WATCHED
+                </label>
+
+                <input
+                    type="date"
+                    id="watched-date"
+                >
+
+            </div>
+
+
+
+            <!-- TAGS -->
+
+            <div class="form-field">
+
+                <label for="tags">
+                    TAGS
+                </label>
+
+                <input
+                    type="text"
+                    id="tags"
+                    placeholder="slow burn, classic, comfort..."
+                >
+
+                <small class="input-help">
+                    Separate tags with commas.
+                </small>
+
+            </div>
+
+
+
+            <!-- WHERE TO WATCH -->
+
+            <div class="form-field">
+
+                <label for="where-to-watch">
+                    WHERE TO WATCH
+                </label>
+
+                <input
+                    type="text"
+                    id="where-to-watch"
+                    placeholder="Netflix, Prime Video, theatre..."
+                >
+
+            </div>
+
+
+
+            <!-- SUMMARY -->
+
+            <div class="form-field">
+
+                <label for="movie-summary">
+                    SUMMARY
+                </label>
+
+                <textarea
+                    id="movie-summary"
+                    rows="5"
+                    placeholder="Movie summary..."
+                ></textarea>
+
+                <small class="input-help">
+                    Automatically filled from OMDb.
+                    You can edit it.
+                </small>
+
+            </div>
+
+
+
+            <!-- PERSONAL NOTE -->
+
+            <div class="form-field">
+
+                <label for="personal-note">
+                    MY NOTE
+                </label>
+
+                <textarea
+                    id="personal-note"
+                    rows="5"
+                    placeholder="What did I think about it?"
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- POSTER -->
+
+            <div class="form-field">
+
+                <label>
+                    POSTER
+                </label>
+
+
+                <div
+                    id="poster-preview"
+                    style="
+                        display: none;
+                        max-width: 180px;
+                        margin-top: 10px;
+                    "
+                >
+
+                    <img
+                        id="poster-preview-image"
+                        src=""
+                        alt="Movie poster"
+                        style="
+                            width: 100%;
+                            display: block;
+                        "
+                    >
+
+                </div>
+
+
+                <small class="input-help">
+
+                    Poster will be filled automatically
+                    when you choose a movie.
+
+                </small>
+
+            </div>
+
+
+
+            <!-- SOURCE -->
+
+            <div class="form-field">
+
+                <label>
+                    SOURCE
+                </label>
+
+                <p
+                    id="movie-source"
+                    class="field-note"
+                >
+                    Search for a movie first.
+                </p>
+
+            </div>
+
+
+
+            <!-- HIDDEN VALUES -->
+
+            <input
+                type="hidden"
+                id="poster-url"
+            >
+
+            <input
+                type="hidden"
+                id="imdb-id"
+            >
+
+
+
+            <!-- SELECTED MOVIE MESSAGE -->
+
+            <div
+                id="selected-movie-message"
+                style="
+                    display: none;
+                    margin: 20px 0;
+                    padding: 14px;
+                    border-left: 2px solid currentColor;
+                    font-size: 0.85rem;
+                    line-height: 1.6;
+                "
+            ></div>
+
+
+
+            <!-- SAVE -->
+
+            <button
+                type="button"
+                class="save-button"
+                id="save-button"
+            >
+                Save to My Archive
+            </button>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================
+         FOOTER
+         ================================= -->
+
+    <footer class="archive-footer">
+
+        <p>
+            MY LITTLE ARCHIVE
+        </p>
+
+        <span>
+            ARCHIVE DESK
+        </span>
+
+    </footer>
+
+
+</main>
+
+
+<!-- =================================
+     JAVASCRIPT
+     ================================= -->
+
+<script src="admin.js"></script>
+
+</body>
+
+</html>

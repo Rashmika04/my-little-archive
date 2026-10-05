@@ -1,0 +1,45 @@
+[
+    {
+        "title": "Pride & Prejudice",
+        "type": "Movie",
+        "year": 2005,
+
+        "poster": "https://images.contentstack.io/v3/assets/blt13adb7e2033fcee5/bltd062acf78c7e5f94/690e987ae155b811ffdef286/PrideAndPrejudice_Poster.jpg?width=2560",
+
+        "director": "Joe Wright",
+
+        "language": "English",
+        "country": "United Kingdom",
+
+        "genres": [
+            "Romance",
+            "Drama",
+            "Historical",
+            "Period"
+        ],
+
+        "relationship": "M/F",
+
+        "tags": [
+            "slow burn",
+            "classic",
+            "period romance"
+        ],
+
+        "status": "Want to Watch",
+
+        "rating": null,
+
+        "dateWatched": "",
+
+        "summary": "",
+
+        "personalNote": "",
+
+        "whereToWatch": "Amazon Prime Video · Rent / Buy",
+
+        "watchLink": "https://www.universalpicturesathome.com/movies/pride-prejudice",
+
+        "availabilityChecked": "5 October 2026"
+    }
+]

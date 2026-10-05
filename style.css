@@ -1,0 +1,1156 @@
+/* =================================
+   MY LITTLE ARCHIVE
+   Visual foundation
+   ================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background: #f3efe7;
+    color: #2d2925;
+
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.6;
+}
+
+::selection {
+    background: #d8c8b2;
+    color: #2d2925;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.page {
+    width: min(1200px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+
+/* =================================
+   HOMEPAGE HEADER
+   ================================= */
+
+.hero {
+    min-height: 70vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 80px 0;
+}
+
+.eyebrow {
+    margin: 0 0 18px;
+
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+
+    color: #7b7065;
+}
+
+.hero h1 {
+    margin: 0;
+
+    font-size: clamp(52px, 9vw, 120px);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+}
+
+.intro {
+    max-width: 520px;
+    margin: 28px 0 0;
+
+    font-size: 20px;
+    color: #6b6259;
+}
+
+
+/* =================================
+   HOMEPAGE COLLECTIONS
+   ================================= */
+
+.collections {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+
+    margin-top: 80px;
+}
+
+.collection {
+    min-height: 300px;
+
+    padding: 36px;
+
+    border: 1px solid #cfc5b8;
+
+    background: rgba(255, 252, 246, 0.35);
+
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease;
+}
+
+.collection:hover {
+    background: #ebe4d9;
+    transform: translateY(-4px);
+}
+
+.collection-number {
+    margin: 0 0 28px;
+
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+
+    color: #8a7d70;
+}
+
+.collection h2 {
+    margin: 0;
+
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.collection-description {
+    max-width: 420px;
+    margin: 18px 0 32px;
+
+    color: #746b62;
+}
+
+
+/* =================================
+   HOMEPAGE ROOM LINKS
+   ================================= */
+
+.rooms {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.room {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    padding: 14px 16px;
+
+    border-top: 1px solid #d6cdc2;
+
+    transition:
+        background 0.25s ease,
+        padding-left 0.25s ease;
+}
+
+.room:last-child {
+    border-bottom: 1px solid #d6cdc2;
+}
+
+.room:hover {
+    background: rgba(255, 252, 246, 0.65);
+    padding-left: 22px;
+}
+
+.room-icon {
+    width: 38px;
+    flex-shrink: 0;
+
+    font-size: 22px;
+    text-align: center;
+}
+
+.room h3 {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.room p {
+    margin: 2px 0 0;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+
+    color: #81766b;
+}
+
+
+/* =================================
+   ROOM PAGE HEADER
+   ================================= */
+
+.room-header {
+    padding: 50px 0 90px;
+}
+
+.back-link {
+    display: inline-block;
+
+    margin-bottom: 80px;
+
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    color: #81766b;
+
+    transition: transform 0.2s ease;
+}
+
+.back-link:hover {
+    transform: translateX(-4px);
+}
+
+.room-header h1 {
+    margin: 0;
+
+    font-size: clamp(64px, 12vw, 150px);
+    font-weight: 400;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+}
+
+.room-intro {
+    max-width: 550px;
+
+    margin: 30px 0 0;
+
+    font-size: 20px;
+    color: #6b6259;
+}
+
+
+/* =================================
+   WATCH INTRO
+   ================================= */
+
+.watch-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+
+    padding: 45px 0;
+
+    border-top: 1px solid #cfc5b8;
+    border-bottom: 1px solid #cfc5b8;
+}
+
+.section-label {
+    margin: 0 0 20px;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+
+    color: #81766b;
+}
+
+.watch-intro h2 {
+    margin: 0;
+
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.1;
+}
+
+.watch-note {
+    max-width: 450px;
+
+    margin: 0;
+
+    color: #746b62;
+}
+
+
+/* =================================
+   WATCH COLLECTION
+   ================================= */
+
+.watch-collection {
+    padding: 90px 0;
+}
+
+.movie-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+
+/* =================================
+   MOVIE CARD
+   ================================= */
+
+.movie-card {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.75fr) 1.25fr;
+    gap: 55px;
+
+    padding: 35px;
+
+    background: #e9e1d5;
+
+    box-shadow:
+        0 18px 45px rgba(70, 58, 45, 0.08);
+
+    transform: rotate(-0.35deg);
+
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.movie-card:nth-child(even) {
+    transform: rotate(0.35deg);
+}
+
+.movie-card:hover {
+    transform: rotate(0deg) translateY(-5px);
+
+    box-shadow:
+        0 24px 55px rgba(70, 58, 45, 0.13);
+}
+
+
+/* =================================
+   MOVIE POSTER
+   ================================= */
+
+.movie-poster {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+
+    overflow: hidden;
+
+    background: #d7cec1;
+
+    box-shadow:
+        0 8px 20px rgba(60, 50, 40, 0.12);
+}
+
+.movie-poster img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.poster-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ddd3c5,
+            #c9bcae
+        );
+
+    color: #73685d;
+}
+
+.poster-placeholder span {
+    font-size: 48px;
+}
+
+.poster-placeholder small {
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+}
+
+
+/* =================================
+   MOVIE INFORMATION
+   ================================= */
+
+.movie-information {
+    align-self: center;
+
+    padding: 20px 15px 20px 0;
+}
+
+.movie-type {
+    margin: 0 0 12px;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+
+    color: #81766b;
+}
+
+.movie-information h2 {
+    margin: 0;
+
+    font-size: clamp(38px, 5vw, 68px);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+}
+
+.movie-director {
+    margin: 18px 0 45px;
+
+    font-size: 17px;
+    font-style: italic;
+
+    color: #746b62;
+}
+
+
+/* =================================
+   MOVIE METADATA
+   ================================= */
+
+.movie-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #c5b9aa;
+}
+
+.meta-group {
+    display: grid;
+    grid-template-columns: 125px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.meta-label {
+    padding-top: 2px;
+
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+
+    color: #8a7d70;
+}
+
+.meta-group p {
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 1.45;
+
+    color: #514941;
+}
+
+
+/* =================================
+   SOURCE / WATCH INFORMATION
+   ================================= */
+
+.source-link {
+    display: inline-block;
+
+    margin-top: 5px;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+
+    color: #75695e;
+
+    border-bottom: 1px solid #bfb2a3;
+}
+
+.source-link:hover {
+    color: #2d2925;
+}
+
+.availability-date {
+    margin-top: 4px !important;
+
+    font-family: "Courier New", monospace;
+    font-size: 9px !important;
+    line-height: 1.4 !important;
+
+    color: #918579 !important;
+}
+
+
+/* =================================
+   TAGS
+   ================================= */
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.tag-list span {
+    display: inline-block;
+
+    padding: 4px 9px;
+
+    border: 1px solid #c3b6a7;
+
+    border-radius: 999px;
+
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+    letter-spacing: 0.03em;
+
+    color: #675d53;
+}
+
+
+/* =================================
+   MOVIE NOTES
+   ================================= */
+
+.movie-note {
+    margin-top: 32px;
+    padding-top: 22px;
+
+    border-top: 1px solid #c5b9aa;
+}
+
+.movie-note .meta-label {
+    display: block;
+
+    margin-bottom: 8px;
+}
+
+.movie-note p {
+    max-width: 600px;
+
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    color: #62584f;
+}
+
+.personal-note {
+    padding-bottom: 5px;
+}
+
+
+/* =================================
+   ADMIN / ADD PAGE
+   ================================= */
+
+.admin-page {
+    padding-bottom: 40px;
+}
+
+.admin-section {
+    padding: 55px 0;
+
+    border-top: 1px solid #cfc5b8;
+}
+
+.admin-section > .section-label {
+    margin-bottom: 28px;
+}
+
+
+/* =================================
+   ADD TYPE SELECTION
+   ================================= */
+
+.add-type-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.add-type {
+    min-height: 145px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    padding: 20px;
+
+    border: 1px solid #cfc5b8;
+
+    background: rgba(255, 252, 246, 0.35);
+
+    color: #2d2925;
+
+    text-align: left;
+
+    transition:
+        background 0.25s ease,
+        transform 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.add-type:hover {
+    background: #ebe4d9;
+    transform: translateY(-3px);
+}
+
+.add-type.active {
+    background: #e6dccf;
+    border-color: #9f9182;
+
+    box-shadow:
+        inset 0 0 0 1px #b7a99a;
+}
+
+.add-type span {
+    margin-bottom: 16px;
+
+    font-size: 26px;
+}
+
+.add-type strong {
+    font-size: 19px;
+    font-weight: 400;
+}
+
+.add-type small {
+    margin-top: 4px;
+
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+    line-height: 1.4;
+
+    color: #81766b;
+}
+
+
+/* =================================
+   SEARCH BOX
+   ================================= */
+
+.search-box {
+    display: flex;
+    gap: 10px;
+
+    max-width: 800px;
+}
+
+.search-box input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 17px 18px;
+
+    border: 1px solid #c5b9aa;
+
+    background: #fffaf2;
+
+    color: #2d2925;
+
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: #8e8071;
+}
+
+.search-button {
+    padding: 17px 28px;
+
+    border: 1px solid #2d2925;
+
+    background: #2d2925;
+    color: #f5efe5;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.search-button:hover {
+    background: #f3efe7;
+    color: #2d2925;
+}
+
+.field-note {
+    margin: 12px 0 0;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+
+    color: #8a7d70;
+}
+
+
+/* =================================
+   SEARCH RESULTS
+   ================================= */
+
+.search-results-section {
+    display: none;
+}
+
+.search-results-section.visible {
+    display: block;
+}
+
+.empty-search {
+    min-height: 180px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px;
+
+    border: 1px dashed #c7bcae;
+
+    text-align: center;
+
+    color: #81766b;
+}
+
+.empty-search span {
+    margin-bottom: 10px;
+
+    font-size: 32px;
+}
+
+.empty-search p {
+    margin: 0;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+}
+
+
+/* =================================
+   ADMIN FORM
+   ================================= */
+
+.admin-form {
+    max-width: 850px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-field label {
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+
+    color: #81766b;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+
+    padding: 14px 15px;
+
+    border: 1px solid #c5b9aa;
+
+    background: #fffaf2;
+
+    color: #2d2925;
+
+    outline: none;
+}
+
+.form-field textarea {
+    resize: vertical;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    border-color: #8e8071;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.input-help {
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+
+    color: #978b7e;
+}
+
+
+/* =================================
+   WATCHED CHECKBOX
+   ================================= */
+
+.check-field {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 18px;
+
+    border: 1px solid #cfc5b8;
+
+    background: rgba(255, 252, 246, 0.45);
+
+    cursor: pointer;
+}
+
+.check-field input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.check-box {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+
+    display: block;
+
+    border: 1px solid #9f9182;
+
+    background: #fffaf2;
+
+    position: relative;
+}
+
+.check-field input:checked + .check-box {
+    background: #2d2925;
+    border-color: #2d2925;
+}
+
+.check-field input:checked + .check-box::after {
+    content: "✓";
+
+    position: absolute;
+
+    left: 4px;
+    top: -3px;
+
+    font-family: Georgia, serif;
+    font-size: 18px;
+
+    color: #f5efe5;
+}
+
+.check-field strong {
+    display: block;
+
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.check-field small {
+    display: block;
+
+    margin-top: 2px;
+
+    font-family: "Courier New", monospace;
+    font-size: 9px;
+
+    color: #81766b;
+}
+
+
+/* =================================
+   HIDDEN FIELD
+   ================================= */
+
+.hidden-field {
+    display: none;
+}
+
+
+/* =================================
+   SAVE BUTTON
+   ================================= */
+
+.save-button {
+    align-self: flex-start;
+
+    margin-top: 10px;
+
+    padding: 17px 30px;
+
+    border: 1px solid #2d2925;
+
+    background: #2d2925;
+    color: #f5efe5;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.save-button:hover {
+    background: #f3efe7;
+    color: #2d2925;
+
+    transform: translateY(-2px);
+}
+
+
+/* =================================
+   LOADING / ERROR
+   ================================= */
+
+.loading-message {
+    padding: 60px;
+
+    text-align: center;
+
+    border: 1px dashed #c7bcae;
+
+    color: #746b62;
+}
+
+.loading-message p {
+    margin: 5px 0;
+}
+
+
+/* =================================
+   FOOTER
+   ================================= */
+
+.archive-footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    margin-top: 100px;
+    padding: 28px 0 50px;
+
+    border-top: 1px solid #cfc5b8;
+
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    color: #81766b;
+}
+
+.archive-footer p {
+    margin: 0;
+}
+
+.archive-footer span {
+    letter-spacing: 0.08em;
+}
+
+
+/* =================================
+   MOBILE
+   ================================= */
+
+@media (max-width: 900px) {
+
+    .add-type-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .movie-card {
+        grid-template-columns: minmax(240px, 0.75fr) 1.25fr;
+        gap: 35px;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .page {
+        width: min(100% - 28px, 1200px);
+    }
+
+    .hero {
+        min-height: 80vh;
+        padding: 60px 0;
+    }
+
+    .hero h1 {
+        font-size: clamp(48px, 15vw, 80px);
+    }
+
+    .intro {
+        font-size: 18px;
+    }
+
+    .collections {
+        grid-template-columns: 1fr;
+        margin-top: 50px;
+    }
+
+    .collection {
+        min-height: auto;
+        padding: 28px;
+    }
+
+    .collection h2 {
+        font-size: 36px;
+    }
+
+    .room {
+        padding: 14px 8px;
+    }
+
+    .room-header {
+        padding: 30px 0 60px;
+    }
+
+    .back-link {
+        margin-bottom: 60px;
+    }
+
+    .room-header h1 {
+        font-size: clamp(64px, 20vw, 100px);
+    }
+
+    .watch-intro {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .watch-intro h2 {
+        font-size: 30px;
+    }
+
+    .watch-collection {
+        padding: 60px 0;
+    }
+
+    .movie-card {
+        grid-template-columns: 1fr;
+
+        gap: 30px;
+
+        padding: 22px;
+
+        transform: none;
+    }
+
+    .movie-card:nth-child(even) {
+        transform: none;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .movie-information {
+        padding: 0;
+    }
+
+    .movie-information h2 {
+        font-size: 44px;
+    }
+
+    .meta-group {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .meta-group p {
+        font-size: 13px;
+    }
+
+    .add-type-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .add-type {
+        min-height: 130px;
+        padding: 16px;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .search-button {
+        width: 100%;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .archive-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
