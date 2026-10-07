@@ -51,5 +51,30 @@
         "watchLink": "https://www.imdb.com/title/tt3281548/",
         "availabilityChecked": "",
         "imdbID": "tt3281548"
+    },
+    {
+        "title": "La La Land",
+        "type": "movie",
+        "year": 2016,
+        "poster": "https://m.media-amazon.com/images/M/MV5BMzUzNDM2NzM2MV5BMl5BanBnXkFtZTgwNTM3NTg4OTE@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+        "director": "Damien Chazelle",
+        "language": "English, Cantonese",
+        "country": "United States, Hong Kong",
+        "genres": [
+            "Comedy",
+            "Drama",
+            "Music"
+        ],
+        "relationship": "M/F",
+        "tags": [],
+        "status": "want",
+        "rating": null,
+        "dateWatched": "",
+        "summary": "Aspiring actress serves lattes to movie stars in between auditions and jazz musician Sebastian scrapes by playing cocktail-party gigs in dingy bars. But as success mounts, they are faced with decisions that fray the fragile fabric of their love affair, and the dreams they worked so hard to maintain in each other threaten to rip them apart.",
+        "personalNote": "",
+        "whereToWatch": "",
+        "watchLink": "https://www.imdb.com/title/tt3783958/",
+        "availabilityChecked": "",
+        "imdbID": "tt3783958"
     }
 ]
