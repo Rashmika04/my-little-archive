@@ -76,5 +76,29 @@
         "watchLink": "https://www.imdb.com/title/tt3783958/",
         "availabilityChecked": "",
         "imdbID": "tt3783958"
+    },
+    {
+        "title": "The Grand Budapest Hotel",
+        "type": "movie",
+        "year": 2014,
+        "poster": "https://m.media-amazon.com/images/M/MV5BMzM5NjUxOTEyMl5BMl5BanBnXkFtZTgwNjEyMDM0MDE@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+        "director": "Wes Anderson",
+        "language": "English, French, German",
+        "country": "United States, Germany",
+        "genres": [
+            "Comedy",
+            "Drama"
+        ],
+        "relationship": "",
+        "tags": [],
+        "status": "want",
+        "rating": null,
+        "dateWatched": "",
+        "summary": "This movie recounts the adventures of M. Gustave, a legendary concierge at a famous European hotel between the wars, and Zero Moustafa, the lobby boy who becomes his most trusted friend. The story involves the theft and recovery of a priceless Renaissance painting and the battle for an enormous family fortune - all against the backdrop of a suddenly and dramatically changing continent.",
+        "personalNote": "",
+        "whereToWatch": "",
+        "watchLink": "https://www.imdb.com/title/tt2278388/",
+        "availabilityChecked": "",
+        "imdbID": "tt2278388"
     }
 ]
