@@ -100,5 +100,30 @@
         "watchLink": "https://www.imdb.com/title/tt2278388/",
         "availabilityChecked": "",
         "imdbID": "tt2278388"
+    },
+    {
+        "title": "The Handmaiden",
+        "type": "movie",
+        "year": 2017,
+        "poster": "https://m.media-amazon.com/images/M/MV5BOTllZDI1OGItOGUxNS00OGZhLWIzMjAtYzllZTY1YTA0ZmYwXkEyXkFqcGc@._V1_QL75_UY562_CR6,0,380,562_.jpg",
+        "director": "Park Chan-wook",
+        "language": "Korean, Japanese",
+        "country": "South Korea",
+        "genres": [
+            "Drama",
+            "Romance",
+            "Thriller"
+        ],
+        "relationship": "F/F · GL",
+        "tags": [],
+        "status": "watched",
+        "rating": null,
+        "dateWatched": "2026-10-08",
+        "summary": "1930s Korea, in the period of Japanese occupation, a new girl (Sookee) is hired as a handmaiden to a Japanese heiress (Hideko) who lives a secluded life on a large countryside estate with her domineering Uncle (Kouzuki). But the maid has a secret. She is a pickpocket recruited by a swindler posing as a Japanese Count to help him seduce the Lady to elope with him, rob her of her fortune, and lock her up in a madhouse. The plan seems to proceed according to plan until Sookee and Hideko discover some unexpected emotions.",
+        "personalNote": "",
+        "whereToWatch": "",
+        "watchLink": "https://www.imdb.com/title/tt4016934/",
+        "availabilityChecked": "",
+        "imdbID": "tt4016934"
     }
 ]
