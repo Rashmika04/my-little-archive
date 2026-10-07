@@ -1,16 +1,13 @@
 /* =================================
    MY LITTLE ARCHIVE
    ADMIN DESK
-   MOVIE SEARCH
-   ================================= */
-
-
-/* =================================
-   CONFIGURATION
+   MOVIE SEARCH + SAVE
    ================================= */
 
 const WORKER_URL =
     "https://my-little-archive-api.peddini-rashmika04.workers.dev";
+
+let adminLoggedIn = false;
 
 
 /* =================================
@@ -20,16 +17,10 @@ const WORKER_URL =
 document.addEventListener(
     "DOMContentLoaded",
     () => {
-
         initializeArchiveDesk();
-
     }
 );
 
-
-/* =================================
-   INITIALIZE
-   ================================= */
 
 function initializeArchiveDesk() {
 
@@ -45,40 +36,26 @@ function initializeArchiveDesk() {
     const searchResults =
         document.getElementById("search-results");
 
-
     if (
         !searchInput ||
         !searchButton ||
         !searchStatus ||
         !searchResults
     ) {
-
         console.error(
             "Archive Desk: required elements were not found."
         );
-
         return;
-
     }
 
-
-    /* ---------------------------------
-       SEARCH BUTTON
-       --------------------------------- */
 
     searchButton.addEventListener(
         "click",
         () => {
-
             searchMovie();
-
         }
     );
 
-
-    /* ---------------------------------
-       ENTER KEY
-       --------------------------------- */
 
     searchInput.addEventListener(
         "keydown",
@@ -89,39 +66,22 @@ function initializeArchiveDesk() {
                 event.preventDefault();
 
                 searchMovie();
-
             }
 
         }
     );
 
 
-    /* ---------------------------------
-       WATCHED CHECKBOX
-       --------------------------------- */
-
     setupWatchedControls();
-
-
-    /* ---------------------------------
-       COLLECTION BUTTONS
-       --------------------------------- */
-
     setupCollectionButtons();
-
-
-    /* ---------------------------------
-       SAVE BUTTON
-       --------------------------------- */
-
     setupSaveButton();
 
 
     console.log(
         "My Little Archive admin.js loaded successfully."
     );
-
 }
+
 
 
 /* =================================
@@ -147,10 +107,6 @@ async function searchMovie() {
         searchInput.value.trim();
 
 
-    /* ---------------------------------
-       EMPTY SEARCH
-       --------------------------------- */
-
     if (!title) {
 
         searchStatus.textContent =
@@ -169,44 +125,25 @@ async function searchMovie() {
         `;
 
         return;
-
     }
 
-
-    /* ---------------------------------
-       SHOW SEARCHING
-       --------------------------------- */
 
     searchButton.disabled = true;
 
     searchButton.textContent =
         "Searching...";
 
-
     searchStatus.textContent =
         `Searching for “${title}”…`;
 
-
     searchResults.innerHTML = `
         <div class="search-status">
-
             Looking through the movie database...
-
         </div>
     `;
 
 
-    console.log(
-        "Searching for:",
-        title
-    );
-
-
     try {
-
-        /* ---------------------------------
-           BUILD WORKER URL
-           --------------------------------- */
 
         const requestURL =
             WORKER_URL +
@@ -214,29 +151,9 @@ async function searchMovie() {
             encodeURIComponent(title);
 
 
-        console.log(
-            "Calling Worker:",
-            requestURL
-        );
-
-
-        /* ---------------------------------
-           CALL WORKER
-           --------------------------------- */
-
         const response =
             await fetch(requestURL);
 
-
-        console.log(
-            "Worker response status:",
-            response.status
-        );
-
-
-        /* ---------------------------------
-           CHECK HTTP RESPONSE
-           --------------------------------- */
 
         if (!response.ok) {
 
@@ -247,23 +164,9 @@ async function searchMovie() {
         }
 
 
-        /* ---------------------------------
-           READ JSON
-           --------------------------------- */
-
         const movie =
             await response.json();
 
-
-        console.log(
-            "Movie data received:",
-            movie
-        );
-
-
-        /* ---------------------------------
-           OMDB NOT FOUND
-           --------------------------------- */
 
         if (
             movie.Response === "False"
@@ -272,9 +175,7 @@ async function searchMovie() {
             searchStatus.textContent =
                 "Movie not found.";
 
-
             searchResults.innerHTML = `
-
                 <div class="search-status">
 
                     <strong>
@@ -289,17 +190,11 @@ async function searchMovie() {
                     )}
 
                 </div>
-
             `;
 
             return;
-
         }
 
-
-        /* ---------------------------------
-           SUCCESS
-           --------------------------------- */
 
         if (!movie.Title) {
 
@@ -316,8 +211,9 @@ async function searchMovie() {
 
         displayMovieResult(movie);
 
+    }
 
-    } catch (error) {
+    catch (error) {
 
         console.error(
             "Movie search error:",
@@ -330,7 +226,6 @@ async function searchMovie() {
 
 
         searchResults.innerHTML = `
-
             <div class="search-status">
 
                 <strong>
@@ -348,10 +243,11 @@ async function searchMovie() {
                 </small>
 
             </div>
-
         `;
 
-    } finally {
+    }
+
+    finally {
 
         searchButton.disabled = false;
 
@@ -363,8 +259,9 @@ async function searchMovie() {
 }
 
 
+
 /* =================================
-   DISPLAY MOVIE RESULT
+   DISPLAY SEARCH RESULT
    ================================= */
 
 function displayMovieResult(movie) {
@@ -446,9 +343,6 @@ function displayMovieResult(movie) {
             "
         >
 
-
-            <!-- POSTER -->
-
             <div
                 style="
                     width:150px;
@@ -491,11 +385,7 @@ function displayMovieResult(movie) {
             </div>
 
 
-
-            <!-- INFORMATION -->
-
             <div>
-
 
                 <p
                     style="
@@ -608,15 +498,14 @@ function displayMovieResult(movie) {
         useButton.addEventListener(
             "click",
             () => {
-
                 useMovie(movie);
-
             }
         );
 
     }
 
 }
+
 
 
 /* =================================
@@ -673,10 +562,6 @@ function useMovie(movie) {
     );
 
 
-    /* ---------------------------------
-       POSTER
-       --------------------------------- */
-
     const posterURL =
         movie.Poster &&
         movie.Poster !== "N/A"
@@ -714,17 +599,15 @@ function useMovie(movie) {
         posterPreview.style.display =
             "block";
 
-    } else if (posterPreview) {
+    }
+
+    else if (posterPreview) {
 
         posterPreview.style.display =
             "none";
 
     }
 
-
-    /* ---------------------------------
-       IMDB
-       --------------------------------- */
 
     setValue(
         "imdb-id",
@@ -757,10 +640,6 @@ function useMovie(movie) {
 
     }
 
-
-    /* ---------------------------------
-       RESET PERSONAL INFORMATION
-       --------------------------------- */
 
     setValue(
         "relationship",
@@ -841,10 +720,6 @@ function useMovie(movie) {
     }
 
 
-    /* ---------------------------------
-       SUCCESS MESSAGE
-       --------------------------------- */
-
     const message =
         document.getElementById(
             "selected-movie-message"
@@ -856,16 +731,11 @@ function useMovie(movie) {
         message.style.display =
             "block";
 
-
         message.textContent =
             `✓ ${movie.Title} has been added to the form. Now add your personal details below.`;
 
     }
 
-
-    /* ---------------------------------
-       UPDATE SEARCH STATUS
-       --------------------------------- */
 
     const searchStatus =
         document.getElementById(
@@ -880,10 +750,6 @@ function useMovie(movie) {
 
     }
 
-
-    /* ---------------------------------
-       SCROLL TO FORM
-       --------------------------------- */
 
     const titleField =
         document.getElementById(
@@ -901,6 +767,7 @@ function useMovie(movie) {
     }
 
 }
+
 
 
 /* =================================
@@ -960,7 +827,9 @@ function setupWatchedControls() {
 
                 }
 
-            } else {
+            }
+
+            else {
 
                 if (watchedDateField) {
 
@@ -1025,6 +894,7 @@ function setupWatchedControls() {
 }
 
 
+
 /* =================================
    COLLECTION BUTTONS
    ================================= */
@@ -1068,6 +938,7 @@ function setupCollectionButtons() {
 }
 
 
+
 /* =================================
    SAVE BUTTON
    ================================= */
@@ -1089,26 +960,7 @@ function setupSaveButton() {
         "click",
         () => {
 
-            const title =
-                getValue(
-                    "movie-title"
-                );
-
-
-            if (!title) {
-
-                alert(
-                    "Please search for a movie and choose it first."
-                );
-
-                return;
-
-            }
-
-
-            alert(
-                "The movie information is ready. Actual saving to your archive will be connected next."
-            );
+            saveMovie();
 
         }
     );
@@ -1116,14 +968,573 @@ function setupSaveButton() {
 }
 
 
+
 /* =================================
-   HELPERS
+   LOGIN
    ================================= */
 
-function setValue(
-    id,
-    value
-) {
+async function login() {
+
+    const password =
+        window.prompt(
+            "Enter your Archive Desk password:"
+        );
+
+
+    if (!password) {
+
+        return false;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                WORKER_URL,
+                {
+                    method: "POST",
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        action: "login",
+                        password: password
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Login failed."
+            );
+
+            return false;
+
+        }
+
+
+        adminLoggedIn =
+            true;
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Login error:",
+            error
+        );
+
+
+        alert(
+            "I couldn't connect to the Archive Desk."
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+
+/* =================================
+   SAVE MOVIE
+   ================================= */
+
+async function saveMovie() {
+
+    const saveButton =
+        document.getElementById(
+            "save-button"
+        );
+
+
+    const title =
+        getValue(
+            "movie-title"
+        );
+
+
+    if (!title) {
+
+        alert(
+            "Please search for a movie and choose it first."
+        );
+
+        return;
+
+    }
+
+
+    const movie = {
+
+        title:
+            getValue("movie-title"),
+
+        type:
+            getValue("movie-type"),
+
+        year:
+            parseInt(
+                getValue("movie-year"),
+                10
+            ) || null,
+
+        poster:
+            getValue("poster-url"),
+
+        director:
+            getValue("movie-director"),
+
+        language:
+            getValue("movie-language"),
+
+        country:
+            getValue("movie-country"),
+
+        genres:
+            getValue("movie-genres")
+                .split(",")
+                .map(item => item.trim())
+                .filter(Boolean),
+
+        relationship:
+            getValue("relationship"),
+
+        tags:
+            getValue("tags")
+                .split(",")
+                .map(item => item.trim())
+                .filter(Boolean),
+
+        status:
+            getValue("movie-status"),
+
+        rating:
+            getValue("rating")
+                ? Number(
+                    getValue("rating")
+                )
+                : null,
+
+        dateWatched:
+            getValue("watched-date"),
+
+        summary:
+            getValue("movie-summary"),
+
+        personalNote:
+            getValue("personal-note"),
+
+        whereToWatch:
+            getValue("where-to-watch"),
+
+        watchLink:
+            getWatchLink(),
+
+        availabilityChecked:
+            "",
+
+        imdbID:
+            getValue("imdb-id")
+
+    };
+
+
+    if (
+        movie.status ===
+        "watched" &&
+        !movie.dateWatched
+    ) {
+
+        const today =
+            new Date();
+
+
+        movie.dateWatched =
+            today.toISOString()
+                .split("T")[0];
+
+    }
+
+
+    saveButton.disabled =
+        true;
+
+    saveButton.textContent =
+        "Saving...";
+
+
+    try {
+
+        if (!adminLoggedIn) {
+
+            const loggedIn =
+                await login();
+
+
+            if (!loggedIn) {
+
+                return;
+
+            }
+
+        }
+
+
+        let response =
+            await sendSaveRequest(
+                movie
+            );
+
+
+        /*
+         * If the session expired,
+         * log in again once and retry.
+         */
+
+        if (response.status === 401) {
+
+            adminLoggedIn =
+                false;
+
+
+            const loggedIn =
+                await login();
+
+
+            if (!loggedIn) {
+
+                return;
+
+            }
+
+
+            response =
+                await sendSaveRequest(
+                    movie
+                );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                `Save failed with HTTP ${response.status}`
+            );
+
+        }
+
+
+        showSaveSuccess(
+            movie.title
+        );
+
+
+        resetMovieForm();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Save error:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Something went wrong while saving."
+        );
+
+    }
+
+    finally {
+
+        saveButton.disabled =
+            false;
+
+        saveButton.textContent =
+            "Save to My Archive";
+
+    }
+
+}
+
+
+
+/* =================================
+   SEND SAVE REQUEST
+   ================================= */
+
+async function sendSaveRequest(movie) {
+
+    return await fetch(
+        WORKER_URL,
+        {
+            method: "POST",
+
+            credentials: "include",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+                action:
+                    "saveMovie",
+
+                movie:
+                    movie
+            })
+        }
+    );
+
+}
+
+
+
+/* =================================
+   WATCH LINK
+   ================================= */
+
+function getWatchLink() {
+
+    const whereToWatch =
+        getValue(
+            "where-to-watch"
+        );
+
+
+    /*
+     * We intentionally do not
+     * invent streaming URLs.
+     *
+     * The existing source link
+     * from the selected movie is
+     * kept only if one exists.
+     */
+
+    const movieSource =
+        document.getElementById(
+            "movie-source"
+        );
+
+
+    if (
+        movieSource &&
+        movieSource.querySelector("a")
+    ) {
+
+        return movieSource
+            .querySelector("a")
+            .href;
+
+    }
+
+
+    return "";
+
+}
+
+
+
+/* =================================
+   SAVE SUCCESS
+   ================================= */
+
+function showSaveSuccess(title) {
+
+    const message =
+        document.getElementById(
+            "selected-movie-message"
+        );
+
+
+    if (!message) {
+
+        alert(
+            `✓ ${title} was saved to your archive.`
+        );
+
+        return;
+
+    }
+
+
+    message.style.display =
+        "block";
+
+
+    message.textContent =
+        `✓ ${title} was saved to your archive.`;
+
+}
+
+
+
+/* =================================
+   RESET FORM
+   ================================= */
+
+function resetMovieForm() {
+
+    const fields = [
+
+        "movie-title",
+        "movie-year",
+        "movie-type",
+        "movie-director",
+        "movie-language",
+        "movie-country",
+        "movie-genres",
+        "tags",
+        "where-to-watch",
+        "movie-summary",
+        "personal-note",
+        "poster-url",
+        "imdb-id",
+        "watched-date"
+
+    ];
+
+
+    fields.forEach(
+        id => {
+
+            setValue(
+                id,
+                ""
+            );
+
+        }
+    );
+
+
+    setValue(
+        "relationship",
+        ""
+    );
+
+
+    setValue(
+        "movie-status",
+        "want"
+    );
+
+
+    setValue(
+        "rating",
+        ""
+    );
+
+
+    const watched =
+        document.getElementById(
+            "watched"
+        );
+
+
+    if (watched) {
+
+        watched.checked =
+            false;
+
+    }
+
+
+    const watchedDateField =
+        document.getElementById(
+            "watched-date-field"
+        );
+
+
+    if (watchedDateField) {
+
+        watchedDateField.classList.add(
+            "hidden-field"
+        );
+
+    }
+
+
+    const posterPreview =
+        document.getElementById(
+            "poster-preview"
+        );
+
+
+    if (posterPreview) {
+
+        posterPreview.style.display =
+            "none";
+
+    }
+
+
+    const posterImage =
+        document.getElementById(
+            "poster-preview-image"
+        );
+
+
+    if (posterImage) {
+
+        posterImage.src =
+            "";
+
+    }
+
+
+    const movieSource =
+        document.getElementById(
+            "movie-source"
+        );
+
+
+    if (movieSource) {
+
+        movieSource.textContent =
+            "Search for a movie first.";
+
+    }
+
+}
+
+
+
+/* =================================
+   SET VALUE
+   ================================= */
+
+function setValue(id, value) {
 
     const element =
         document.getElementById(id);
@@ -1154,6 +1565,11 @@ function setValue(
 }
 
 
+
+/* =================================
+   GET VALUE
+   ================================= */
+
 function getValue(id) {
 
     const element =
@@ -1161,7 +1577,9 @@ function getValue(id) {
 
 
     if (!element) {
+
         return "";
+
     }
 
 
@@ -1170,8 +1588,9 @@ function getValue(id) {
 }
 
 
+
 /* =================================
-   HTML SAFETY
+   ESCAPE HTML
    ================================= */
 
 function escapeHTML(value) {
@@ -1187,22 +1606,27 @@ function escapeHTML(value) {
 
 
     return String(value)
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"
@@ -1210,6 +1634,11 @@ function escapeHTML(value) {
 
 }
 
+
+
+/* =================================
+   ESCAPE ATTRIBUTE
+   ================================= */
 
 function escapeAttribute(value) {
 
