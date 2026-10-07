@@ -3,43 +3,53 @@
         "title": "Pride & Prejudice",
         "type": "Movie",
         "year": 2005,
-
         "poster": "https://images.contentstack.io/v3/assets/blt13adb7e2033fcee5/bltd062acf78c7e5f94/690e987ae155b811ffdef286/PrideAndPrejudice_Poster.jpg?width=2560",
-
         "director": "Joe Wright",
-
         "language": "English",
         "country": "United Kingdom",
-
         "genres": [
             "Romance",
             "Drama",
             "Historical",
             "Period"
         ],
-
         "relationship": "M/F",
-
         "tags": [
             "slow burn",
             "classic",
             "period romance"
         ],
-
         "status": "Want to Watch",
-
         "rating": null,
-
         "dateWatched": "",
-
         "summary": "",
-
         "personalNote": "",
-
         "whereToWatch": "Amazon Prime Video · Rent / Buy",
-
         "watchLink": "https://www.universalpicturesathome.com/movies/pride-prejudice",
-
         "availabilityChecked": "5 October 2026"
+    },
+    {
+        "title": "Little Women",
+        "type": "movie",
+        "year": 2019,
+        "poster": "https://m.media-amazon.com/images/M/MV5BMWMzYjNiZWMtMDg4NS00MDgyLTk5MWItOTFmNjg4NzRhZmExXkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+        "director": "Greta Gerwig",
+        "language": "English, French",
+        "country": "United States",
+        "genres": [
+            "Drama",
+            "Romance"
+        ],
+        "relationship": "",
+        "tags": [],
+        "status": "want",
+        "rating": null,
+        "dateWatched": "",
+        "summary": "In 19th-century Massachusetts, with their father away serving in the Civil War, the women of the March family--loving matriarch, Marmee and her four daughters Meg, Jo, Beth, and Amy--are left to fend for themselves. Faced with genteel poverty, fledgling author Jo struggles to make a name for herself in male-dominated New York City; considerate Meg and starts a family; artistically-inclined Amy travels to Paris with affluent Aunt March. The news of shy but nurturing Beth's serious illness reunites the sisters under one roof again, but more than anything in the world--much to the disappointment of handsome next-door neighbor Theodore \"Laurie\" Laurence--fiercely-independent Jo yearns for freedom. Must all stories end with a wedding?",
+        "personalNote": "",
+        "whereToWatch": "",
+        "watchLink": "https://www.imdb.com/title/tt3281548/",
+        "availabilityChecked": "",
+        "imdbID": "tt3281548"
     }
 ]
