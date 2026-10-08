@@ -149,5 +149,29 @@
         "watchLink": "https://www.imdb.com/title/tt0108778/",
         "availabilityChecked": "",
         "imdbID": "tt0108778"
+    },
+    {
+        "title": "23.5",
+        "type": "series",
+        "year": 2024,
+        "poster": "https://m.media-amazon.com/images/M/MV5BYjk5OTY1MzctNTA0YS00M2Q2LThiYjktZGY0Y2VjNTYwY2Y4XkEyXkFqcGc@._V1_QL75_UY562_CR36,0,380,562_.jpg",
+        "director": "",
+        "language": "Thai",
+        "country": "Thailand",
+        "genres": [
+            "Comedy",
+            "Romance"
+        ],
+        "relationship": "F/F · GL",
+        "tags": [],
+        "status": "watched",
+        "rating": 9,
+        "dateWatched": "2026-10-08",
+        "summary": "Ongsa, a loner all her life, falls in love at first sight with the more popular Sun. However, with the fear of being rejected, she decides to approach her under the pseudonym \"Earth\". As Sun gets more and more curious about who Earth is and starts to fall for her, will Ongsa reveal herself to Sun?",
+        "personalNote": "",
+        "whereToWatch": "",
+        "watchLink": "https://www.imdb.com/title/tt24657706/",
+        "availabilityChecked": "",
+        "imdbID": "tt24657706"
     }
 ]
