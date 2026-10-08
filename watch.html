@@ -1,94 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Watch — My Little Archive</title>
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Watch — My Little Archive</title>
+  <link rel="stylesheet" href="watch.css">
 </head>
 
 <body>
+  <div class="page">
+    <header class="topbar">
+      <a class="home" href="index.html">← HOME</a>
+      <div class="crumb">MY LITTLE ARCHIVE <span>/</span> WATCH</div>
+      <div class="clock" id="clock"></div>
+    </header>
 
-    <main class="page watch-page">
+    <main>
+      <section class="hero">
+        <div class="eyebrow">THE WATCH ROOM</div>
+        <h1>Stories I've watched<br>or want to remember.</h1>
+        <p class="sub">
+          MOVIES · SERIES · DRAMAS · TV SHOWS · ANIME · ANY LANGUAGE · ANY GENRE
+        </p>
+      </section>
 
-        <!-- =================================
-             WATCH HEADER
-             ================================= -->
+      <section class="tools">
+        <div class="search-wrap">
+          <span aria-hidden="true">⌕</span>
+          <input
+            id="search"
+            type="search"
+            placeholder="Search your watch archive…"
+            autocomplete="off"
+          >
+          <button id="clearSearch" type="button">CLEAR</button>
+        </div>
 
-        <header class="room-header">
+        <div id="filters" class="filters"></div>
 
-            <a href="index.html" class="back-link">
-                ← My Little Archive
-            </a>
+        <div class="result-row">
+          <span id="count">0 TITLES</span>
+          <button id="clearFilters" type="button">CLEAR FILTERS</button>
+        </div>
+      </section>
 
-            <p class="eyebrow">01 · STORIES · WATCH</p>
+      <section class="collection">
+        <div class="collection-head">
+          <span>THE COLLECTION</span>
+          <button id="openAdd" class="add-button" type="button">
+            ＋ ADD TO ARCHIVE
+          </button>
+          <span class="drag-hint">DRAG · SWIPE · TAP</span>
+        </div>
 
-            <h1>Watch</h1>
+        <div class="rack">
+          <button class="arrow left" id="prev" type="button" aria-label="Scroll left">‹</button>
+          <div class="edge-fade left-fade"></div>
+          <div id="rail" class="rail"></div>
+          <div class="edge-fade right-fade"></div>
+          <button class="arrow right" id="next" type="button" aria-label="Scroll right">›</button>
+        </div>
 
-            <p class="room-intro">
-                Movies, series, dramas, and the stories
-                that found their way into my little archive.
-            </p>
+        <div class="rack-floor"></div>
 
-        </header>
-
-
-        <!-- =================================
-             WATCH INTRO
-             ================================= -->
-
-        <section class="watch-intro">
-
-            <div>
-                <p class="section-label">THE COLLECTION</p>
-
-                <h2>Things I’ve watched<br>or want to watch.</h2>
-            </div>
-
-            <p class="watch-note">
-                Each entry keeps the little details I might
-                want to remember later — what it is, where
-                I found it, what genre it belongs to, and
-                what I thought of it.
-            </p>
-
-        </section>
-
-
-        <!-- =================================
-             MOVIE COLLECTION
-             ================================= -->
-
-        <section class="watch-collection">
-
-            <div id="movie-grid" class="movie-grid">
-                <!-- Movies will appear here automatically -->
-            </div>
-
-        </section>
-
-
-        <!-- =================================
-             FOOTER
-             ================================= -->
-
-        <footer class="archive-footer">
-
-            <p>MY LITTLE ARCHIVE</p>
-
-            <span>WATCH</span>
-
-        </footer>
-
+        <div id="empty" class="empty" hidden>
+          <div>NOTHING HERE YET</div>
+          <p>Try another search or clear the filters.</p>
+          <button id="emptyAdd" type="button">ADD A STORY</button>
+        </div>
+      </section>
     </main>
 
+    <footer>MY LITTLE ARCHIVE · WATCH</footer>
+  </div>
 
-    <!-- JavaScript -->
-    <script src="watch.js"></script>
+  <!-- STORY DETAILS -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close></div>
+    <article class="detail">
+      <button class="close" id="close" type="button" aria-label="Close">×</button>
+      <div id="detailContent"></div>
+    </article>
+  </div>
 
+  <!-- ADD / EDIT STORY -->
+  <div id="addModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-add-close></div>
+
+    <article class="add-card">
+      <button class="close" id="closeAdd" type="button" aria-label="Close">×</button>
+
+      <div class="add-heading">
+        <div class="eyebrow">THE ARCHIVE DESK</div>
+        <h2 id="addHeadingTitle">Add a story.</h2>
+        <p id="addHeadingText">
+          Find a title or enter its details manually. You can edit everything before saving.
+        </p>
+      </div>
+
+      <form id="addForm">
+        <div class="movie-search-box">
+          <label for="movieLookup">FIND A MOVIE / SHOW</label>
+          <div class="movie-search-row">
+            <input
+              id="movieLookup"
+              type="search"
+              placeholder="e.g. The Handmaiden"
+              autocomplete="off"
+            >
+            <button id="findMovie" class="primary-button" type="button">
+              FIND MOVIE
+            </button>
+          </div>
+          <small id="movieSearchStatus">
+            Artwork and details are retrieved automatically when available.
+          </small>
+        </div>
+
+        <input name="poster" type="hidden">
+
+        <div class="form-grid">
+          <label>
+            TITLE
+            <input name="title" type="text" required>
+          </label>
+
+          <label>
+            TYPE
+            <select name="type">
+              <option>Movie</option>
+              <option>Series</option>
+              <option>Drama</option>
+              <option>TV Show</option>
+              <option>Anime</option>
+              <option>Special</option>
+              <option>Other</option>
+            </select>
+          </label>
+
+          <label>
+            YEAR
+            <input name="year" type="number" min="1880" max="2100">
+          </label>
+
+          <label>
+            DIRECTOR / CREATOR
+            <input name="director" type="text">
+          </label>
+
+          <label>
+            LANGUAGE
+            <input name="language" type="text">
+          </label>
+
+          <label>
+            COUNTRY
+            <input name="country" type="text">
+          </label>
+
+          <label>
+            REPRESENTATION
+            <input name="relationship" type="text" placeholder="M/F · F/F · M/M · GL · BL">
+          </label>
+
+          <label>
+            GENRES
+            <input name="genres" type="text" placeholder="Romance, Drama, Thriller">
+          </label>
+
+          <label>
+            TAGS
+            <input name="tags" type="text" placeholder="slow burn, comfort, tragic">
+          </label>
+
+          <label>
+            STATUS
+            <select name="status">
+              <option>Want to Watch</option>
+              <option>Watching</option>
+              <option>Watched</option>
+              <option>Dropped</option>
+            </select>
+          </label>
+
+          <label>
+            TITLE STYLE
+            <select name="titleStyle">
+              <option value="elegant">Elegant</option>
+              <option value="romantic">Romantic</option>
+              <option value="classic">Classic</option>
+              <option value="modern">Modern</option>
+              <option value="dramatic">Dramatic</option>
+              <option value="minimal">Minimal</option>
+            </select>
+          </label>
+
+          <label>
+            DURATION
+            <input name="duration" type="text" placeholder="2h 12min">
+          </label>
+
+          <label>
+            RATING
+            <input name="rating" type="text" placeholder="e.g. 8.5">
+          </label>
+
+          <label>
+            DATE WATCHED
+            <input name="dateWatched" type="date">
+          </label>
+
+          <label>
+            WHERE TO WATCH
+            <input name="whereToWatch" type="text" placeholder="Netflix · Prime Video">
+          </label>
+
+          <label class="wide">
+            WATCH / SOURCE LINK
+            <input name="watchLink" type="url" placeholder="https://…">
+          </label>
+
+          <label class="wide">
+            DESCRIPTION / SUMMARY
+            <textarea name="description" rows="4" placeholder="What is this story about?"></textarea>
+          </label>
+
+          <label class="wide">
+            MY NOTE
+            <textarea name="personalNote" rows="4" placeholder="Your own thoughts and favourite details…"></textarea>
+          </label>
+        </div>
+
+        <div class="add-actions">
+          <button id="cancelAdd" class="secondary-button" type="button">CANCEL</button>
+          <button class="primary-button" type="submit">SAVE TO ARCHIVE</button>
+        </div>
+      </form>
+    </article>
+  </div>
+
+  <script src="watch.js"></script>
 </body>
-
 </html>

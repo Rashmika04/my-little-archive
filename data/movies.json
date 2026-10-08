@@ -26,7 +26,9 @@
         "personalNote": "",
         "whereToWatch": "Amazon Prime Video · Rent / Buy",
         "watchLink": "https://www.universalpicturesathome.com/movies/pride-prejudice",
-        "availabilityChecked": "5 October 2026"
+        "availabilityChecked": "5 October 2026",
+        "id": "pride-prejudice-2005",
+        "description": "A beloved period romance about Elizabeth Bennet and Mr. Darcy."
     },
     {
         "title": "Little Women",
@@ -38,10 +40,17 @@
         "country": "United States",
         "genres": [
             "Drama",
-            "Romance"
+            "Romance",
+            "Historical",
+            "Coming-of-age"
         ],
-        "relationship": "",
-        "tags": [],
+        "relationship": "M/F",
+        "tags": [
+            "family",
+            "sisters",
+            "period",
+            "coming-of-age"
+        ],
         "status": "want",
         "rating": null,
         "dateWatched": "",
@@ -50,7 +59,9 @@
         "whereToWatch": "",
         "watchLink": "https://www.imdb.com/title/tt3281548/",
         "availabilityChecked": "",
-        "imdbID": "tt3281548"
+        "imdbID": "tt3281548",
+        "id": "little-women-2019",
+        "description": "Four sisters come of age while finding their own ways through love, family and ambition."
     },
     {
         "title": "La La Land",
@@ -63,10 +74,17 @@
         "genres": [
             "Comedy",
             "Drama",
-            "Music"
+            "Music",
+            "Romance",
+            "Musical"
         ],
         "relationship": "M/F",
-        "tags": [],
+        "tags": [
+            "music",
+            "dreams",
+            "bittersweet",
+            "love"
+        ],
         "status": "want",
         "rating": null,
         "dateWatched": "",
@@ -75,7 +93,9 @@
         "whereToWatch": "",
         "watchLink": "https://www.imdb.com/title/tt3783958/",
         "availabilityChecked": "",
-        "imdbID": "tt3783958"
+        "imdbID": "tt3783958",
+        "id": "la-la-land-2016",
+        "description": "A musical romance about two dreamers trying to build lives and careers in Los Angeles."
     },
     {
         "title": "The Grand Budapest Hotel",
@@ -87,10 +107,16 @@
         "country": "United States, Germany",
         "genres": [
             "Comedy",
-            "Drama"
+            "Drama",
+            "Adventure"
         ],
-        "relationship": "",
-        "tags": [],
+        "relationship": "M/F",
+        "tags": [
+            "quirky",
+            "whimsical",
+            "ensemble",
+            "dark comedy"
+        ],
         "status": "want",
         "rating": null,
         "dateWatched": "",
@@ -99,12 +125,14 @@
         "whereToWatch": "",
         "watchLink": "https://www.imdb.com/title/tt2278388/",
         "availabilityChecked": "",
-        "imdbID": "tt2278388"
+        "imdbID": "tt2278388",
+        "id": "grand-budapest-2014",
+        "description": "A whimsical caper centred on a legendary hotel concierge and his lobby boy protégé."
     },
     {
         "title": "The Handmaiden",
         "type": "movie",
-        "year": 2017,
+        "year": 2016,
         "poster": "https://m.media-amazon.com/images/M/MV5BOTllZDI1OGItOGUxNS00OGZhLWIzMjAtYzllZTY1YTA0ZmYwXkEyXkFqcGc@._V1_QL75_UY562_CR6,0,380,562_.jpg",
         "director": "Park Chan-wook",
         "language": "Korean, Japanese",
@@ -115,7 +143,12 @@
             "Thriller"
         ],
         "relationship": "F/F · GL",
-        "tags": [],
+        "tags": [
+            "psychological",
+            "period",
+            "twist",
+            "slow burn"
+        ],
         "status": "watched",
         "rating": null,
         "dateWatched": "2026-10-08",
@@ -124,7 +157,9 @@
         "whereToWatch": "",
         "watchLink": "https://www.imdb.com/title/tt4016934/",
         "availabilityChecked": "",
-        "imdbID": "tt4016934"
+        "imdbID": "tt4016934",
+        "id": "handmaiden-2016",
+        "description": "A visually rich psychological romance built around deception, desire and shifting loyalties."
     },
     {
         "title": "Friends",
