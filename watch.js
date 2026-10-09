@@ -173,9 +173,11 @@ function escapeHTML(value = "") {
 
 function hash(value = "") {
   let result = 0;
+
   for (let i = 0; i < value.length; i++) {
     result = (result * 31 + value.charCodeAt(i)) | 0;
   }
+
   return Math.abs(result);
 }
 
@@ -749,7 +751,7 @@ function openDetail(id) {
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 
-  /* If the saved artwork is missing OR previously failed, retry lookup. */
+  /* If saved artwork is missing, retry lookup. */
   if (!movie.poster) {
     fetchArtworkForExistingMovie(movie);
   }
@@ -780,9 +782,6 @@ async function fetchArtworkForExistingMovie(movie) {
     const found = await findArtwork(movie.title);
     if (!found) return;
 
-    /*
-     * Only update the poster if the returned title matches.
-     */
     if (
       found.poster &&
       normaliseTitle(found.title) === normaliseTitle(movie.title)
@@ -1213,8 +1212,23 @@ updateClock();
 setInterval(updateClock, 60000);
 
 /* =========================================================
-   LOAD COLLECTION
+   LOAD COLLECTION — MERGE DUPLICATES SAFELY
 ========================================================= */
+
+function movieMatchKey(movie) {
+  const title = normaliseTitle(movie.title);
+  const year = String(movie.year || "").trim();
+  const type = String(movie.type || "").trim().toLowerCase();
+
+  if (!title || !year) return "";
+
+  const normalizedType =
+    /^(movie|film)$/i.test(type) ? "movie" :
+    /^(series|tv show|show|drama|anime)$/i.test(type) ? "series" :
+    type;
+
+  return `${title}|${year}|${normalizedType}`;
+}
 
 async function loadMovies() {
   let baseMovies = [];
@@ -1245,19 +1259,74 @@ async function loadMovies() {
   }
 
   const manualMovies = readLocalMovies();
-  const baseIds = new Set(baseMovies.map(movie => movie.id));
+  const overrides = readOverrides();
 
-  const combined = [
-    ...baseMovies,
-    ...manualMovies.filter(movie => !baseIds.has(movie.id))
-  ];
+  const combined = [];
+  const byId = new Map();
+  const byMatchKey = new Map();
 
-  allMovies = applyOverrides(
-    combined.map((movie, index) => normaliseMovie(movie, index))
-  ).map(movie => ({
-    ...movie,
-    status: statusOf(movie)
-  }));
+  function hasUsefulValue(value) {
+    return value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      !(Array.isArray(value) && value.length === 0);
+  }
+
+  function addOrMerge(rawMovie) {
+    const movie = normaliseMovie(rawMovie, combined.length);
+    const matchKey = movieMatchKey(movie);
+
+    const existing =
+      byId.get(movie.id) ||
+      (matchKey ? byMatchKey.get(matchKey) : null);
+
+    if (!existing) {
+      combined.push(movie);
+      byId.set(movie.id, movie);
+
+      if (matchKey) {
+        byMatchKey.set(matchKey, movie);
+      }
+
+      return;
+    }
+
+    // Merge useful values without replacing stable IDs or saved status.
+    for (const [key, value] of Object.entries(movie)) {
+      if (key === "id" || key === "status") continue;
+      if (hasUsefulValue(value)) {
+        existing[key] = value;
+      }
+    }
+
+    existing.localManual =
+      existing.localManual === true || movie.localManual === true;
+
+    byId.set(existing.id, existing);
+
+    const mergedKey = movieMatchKey(existing);
+    if (mergedKey) {
+      byMatchKey.set(mergedKey, existing);
+    }
+  }
+
+  // JSON entries first; matching local copies merge into them.
+  baseMovies.forEach(addOrMerge);
+  manualMovies.forEach(addOrMerge);
+
+  allMovies = combined.map(movie => {
+    const override = overrides[movie.id] || {};
+
+    const merged = normaliseMovie(
+      { ...movie, ...override, id: movie.id },
+      0
+    );
+
+    return {
+      ...merged,
+      status: statusOf(merged)
+    };
+  });
 
   buildFilters();
   render();
