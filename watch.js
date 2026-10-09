@@ -1,3 +1,4 @@
+
 "use strict";
 
 /* =========================================================
@@ -40,28 +41,21 @@ const PALETTES = [
 ];
 
 const TITLE_STYLES = [
-  "elegant",
-  "romantic",
-  "classic",
-  "modern",
-  "dramatic",
-  "minimal"
+  "elegant", "romantic", "classic",
+  "modern", "dramatic", "minimal"
 ];
 
-/* HTML ELEMENTS */
+/* ELEMENTS */
 
 const rail = document.getElementById("rail");
 const search = document.getElementById("search");
 const count = document.getElementById("count");
 const filtersEl = document.getElementById("filters");
 const empty = document.getElementById("empty");
-
 const modal = document.getElementById("modal");
 const detailContent = document.getElementById("detailContent");
-
 const addModal = document.getElementById("addModal");
 const addForm = document.getElementById("addForm");
-
 const movieLookup = document.getElementById("movieLookup");
 const movieSearchStatus = document.getElementById("movieSearchStatus");
 const findMovieButton = document.getElementById("findMovie");
@@ -74,6 +68,7 @@ let activeFilters = {};
 let currentMovieId = null;
 let editingMovieId = null;
 let currentIndex = -1;
+let artworkRequestIds = new Set();
 
 let drag = {
   active: false,
@@ -178,11 +173,9 @@ function escapeHTML(value = "") {
 
 function hash(value = "") {
   let result = 0;
-
   for (let i = 0; i < value.length; i++) {
     result = (result * 31 + value.charCodeAt(i)) | 0;
   }
-
   return Math.abs(result);
 }
 
@@ -197,6 +190,14 @@ function splitList(value) {
     .split(",")
     .map(item => item.trim())
     .filter(Boolean);
+}
+
+function normaliseTitle(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
 }
 
 function paletteFor(movie) {
@@ -214,7 +215,6 @@ function normaliseMovie(movie, index = 0) {
 
   result.title = String(result.title || "Untitled");
   result.type = String(result.type || "Movie");
-
   result.genres = asArray(result.genres || result.genre);
   result.tags = asArray(result.tags);
 
@@ -294,15 +294,20 @@ function applyOverrides(movies) {
   }));
 }
 
-/* ARTWORK LOOKUP */
+/* =========================================================
+   ARTWORK LOOKUP — PREVENT WRONG POSTERS
+========================================================= */
 
 function parseOMDb(data) {
   if (!data || data.Response === "False") return null;
 
-  const valid = value => value && value !== "N/A" ? value : "";
-  const list = value => valid(value)
-    ? value.split(",").map(item => item.trim()).filter(Boolean)
-    : [];
+  const valid = value =>
+    value && value !== "N/A" ? value : "";
+
+  const list = value =>
+    valid(value)
+      ? value.split(",").map(item => item.trim()).filter(Boolean)
+      : [];
 
   const yearMatch = String(data.Year || "").match(/\d{4}/);
 
@@ -328,9 +333,9 @@ async function findArtwork(title) {
   title = String(title || "").trim();
   if (!title) return null;
 
-  let result = null;
+  const wanted = normaliseTitle(title);
 
-  /* First use the existing Cloudflare Worker and its OMDb proxy. */
+  /* First: Cloudflare Worker / OMDb. */
   try {
     const response = await fetch(
       `${WORKER_URL}?title=${encodeURIComponent(title)}`,
@@ -339,44 +344,66 @@ async function findArtwork(title) {
 
     if (response.ok) {
       const data = await response.json();
-      result = parseOMDb(data);
+      const result = parseOMDb(data);
 
-      if (result && result.poster) return result;
+      /*
+       * Reject a result when its title does not match.
+       * This stops Salaar from receiving The Handmaiden's poster.
+       */
+      if (
+        result &&
+        result.poster &&
+        normaliseTitle(result.title) === wanted
+      ) {
+        return result;
+      }
     }
   } catch (error) {
     console.warn("OMDb lookup unavailable:", error);
   }
 
-  /* If OMDb is unavailable, try Wikipedia's page image. */
+  /* Second: Wikipedia, but ONLY an exact title match. */
   try {
-    const slug = title.replace(/\s+/g, "_");
+    const url =
+      "https://en.wikipedia.org/w/api.php" +
+      "?action=query" +
+      "&generator=search" +
+      "&gsrsearch=" + encodeURIComponent(title) +
+      "&gsrnamespace=0" +
+      "&gsrlimit=10" +
+      "&prop=pageimages|extracts" +
+      "&exintro=1" +
+      "&explaintext=1" +
+      "&piprop=thumbnail" +
+      "&pithumbsize=900" +
+      "&format=json" +
+      "&formatversion=2" +
+      "&origin=*";
 
-    const response = await fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(slug)}`,
-      { cache: "no-store" }
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    const pages = data?.query?.pages || [];
+
+    const exactPage = pages.find(page =>
+      normaliseTitle(page.title) === wanted &&
+      page.thumbnail?.source
     );
 
-    if (response.ok) {
-      const data = await response.json();
-      const poster =
-        data?.originalimage?.source ||
-        data?.thumbnail?.source ||
-        "";
+    if (!exactPage) return null;
 
-      if (poster) {
-        return {
-          ...(result || {}),
-          title: result?.title || data.title || title,
-          poster,
-          description: result?.description || data.extract || ""
-        };
-      }
-    }
+    return {
+      title: exactPage.title,
+      poster: exactPage.thumbnail.source,
+      description: exactPage.extract || "",
+      summary: exactPage.extract || ""
+    };
   } catch (error) {
-    console.warn("Wikipedia image lookup unavailable:", error);
+    console.warn("Wikipedia artwork lookup unavailable:", error);
   }
 
-  return result;
+  return null;
 }
 
 async function saveMovieToWorker(movie) {
@@ -393,7 +420,10 @@ async function saveMovieToWorker(movie) {
 
     return response.ok;
   } catch (error) {
-    console.warn("Remote save unavailable. The local copy is preserved.", error);
+    console.warn(
+      "Remote save unavailable. The local copy is preserved.",
+      error
+    );
     return false;
   }
 }
@@ -484,7 +514,7 @@ document.addEventListener("click", () => {
   });
 });
 
-/* SEARCH AND FILTER MATCHING */
+/* SEARCH */
 
 function matchesFilters(movie) {
   const query = String(search.value || "").trim().toLowerCase();
@@ -516,7 +546,7 @@ function matchesFilters(movie) {
   });
 }
 
-/* CASE CREATION */
+/* CASE CREATION — NO POSTERS ON THE SHELF */
 
 function makeCase(movie) {
   const [c, c2] = paletteFor(movie);
@@ -572,7 +602,9 @@ function render() {
   empty.hidden = filteredMovies.length > 0;
 
   if (currentMovieId) {
-    currentIndex = filteredMovies.findIndex(movie => movie.id === currentMovieId);
+    currentIndex = filteredMovies.findIndex(
+      movie => movie.id === currentMovieId
+    );
   }
 }
 
@@ -611,6 +643,7 @@ function openDetail(id) {
       <div class="detail-info">
         <div class="eyebrow">${escapeHTML(statusOf(movie))} · ${escapeHTML(movie.type)}</div>
         <h2>${escapeHTML(movie.title)}</h2>
+
         <div class="director">
           ${escapeHTML(movie.year || "")}
           ${movie.director ? ` · ${escapeHTML(movie.director)}` : ""}
@@ -698,8 +731,15 @@ function openDetail(id) {
     openEditModal(movie);
   });
 
-  detailContent.querySelector("#detailPrev").addEventListener("click", () => navigate(-1));
-  detailContent.querySelector("#detailNext").addEventListener("click", () => navigate(1));
+  detailContent.querySelector("#detailPrev").addEventListener(
+    "click",
+    () => navigate(-1)
+  );
+
+  detailContent.querySelector("#detailNext").addEventListener(
+    "click",
+    () => navigate(1)
+  );
 
   detailContent.querySelector("#detailPrev").disabled = currentIndex <= 0;
   detailContent.querySelector("#detailNext").disabled =
@@ -709,7 +749,7 @@ function openDetail(id) {
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 
-  /* If artwork is missing, attempt to fetch it after opening the detail. */
+  /* If the saved artwork is missing OR previously failed, retry lookup. */
   if (!movie.poster) {
     fetchArtworkForExistingMovie(movie);
   }
@@ -732,23 +772,53 @@ function closeModal() {
 /* RETRIEVE MISSING ARTWORK */
 
 async function fetchArtworkForExistingMovie(movie) {
-  const found = await findArtwork(movie.title);
+  if (artworkRequestIds.has(movie.id)) return;
 
-  if (!found) return;
+  artworkRequestIds.add(movie.id);
 
-  if (found.poster) movie.poster = found.poster;
-  if (!movie.description && found.description) movie.description = found.description;
-  if (!movie.director && found.director) movie.director = found.director;
-  if (!movie.language && found.language) movie.language = found.language;
-  if (!movie.country && found.country) movie.country = found.country;
-  if (!movie.year && found.year) movie.year = found.year;
-  if (!movie.genres?.length && found.genres) movie.genres = found.genres;
+  try {
+    const found = await findArtwork(movie.title);
+    if (!found) return;
 
-  saveOverride(movie);
-  saveLocalMovies();
+    /*
+     * Only update the poster if the returned title matches.
+     */
+    if (
+      found.poster &&
+      normaliseTitle(found.title) === normaliseTitle(movie.title)
+    ) {
+      movie.poster = found.poster;
+    }
 
-  if (currentMovieId === movie.id && modal.classList.contains("open")) {
-    openDetail(movie.id);
+    if (!movie.description && found.description) {
+      movie.description = found.description;
+    }
+    if (!movie.director && found.director) {
+      movie.director = found.director;
+    }
+    if (!movie.language && found.language) {
+      movie.language = found.language;
+    }
+    if (!movie.country && found.country) {
+      movie.country = found.country;
+    }
+    if (!movie.year && found.year) {
+      movie.year = found.year;
+    }
+    if ((!movie.genres || !movie.genres.length) && found.genres) {
+      movie.genres = found.genres;
+    }
+
+    saveOverride(movie);
+    saveLocalMovies();
+
+    if (currentMovieId === movie.id && modal.classList.contains("open")) {
+      openDetail(movie.id);
+    }
+  } catch (error) {
+    console.warn(`Artwork lookup failed for ${movie.title}:`, error);
+  } finally {
+    artworkRequestIds.delete(movie.id);
   }
 }
 
@@ -763,7 +833,8 @@ function openAddModal() {
     "Find a title or enter its details manually. You can edit everything before saving.";
 
   addForm.querySelector('[type="submit"]').textContent = "SAVE TO ARCHIVE";
-  movieSearchStatus.textContent = "Artwork and details are retrieved automatically when available.";
+  movieSearchStatus.textContent =
+    "Artwork and details are retrieved automatically when available.";
 
   addModal.classList.add("open");
   addModal.setAttribute("aria-hidden", "false");
@@ -808,6 +879,8 @@ function openEditModal(movie) {
   set("personalNote", movie.personalNote);
 
   movieLookup.value = movie.title;
+  movieSearchStatus.textContent =
+    "Editing an existing entry. Searching again can retrieve its artwork.";
 
   addModal.classList.add("open");
   addModal.setAttribute("aria-hidden", "false");
@@ -826,7 +899,12 @@ function closeAddModal() {
 function fillEmptyField(name, value) {
   const field = addForm.elements.namedItem(name);
 
-  if (field && !String(field.value || "").trim() && value !== undefined && value !== "") {
+  if (
+    field &&
+    !String(field.value || "").trim() &&
+    value !== undefined &&
+    value !== ""
+  ) {
     field.value = value;
   }
 }
@@ -840,7 +918,7 @@ async function lookupMovie() {
   }
 
   findMovieButton.disabled = true;
-  movieSearchStatus.textContent = "Looking for the title and its artwork…";
+  movieSearchStatus.textContent = "Looking for the exact title and artwork…";
 
   try {
     const found = await findArtwork(title);
@@ -848,7 +926,7 @@ async function lookupMovie() {
     if (!found) {
       fillEmptyField("title", title);
       movieSearchStatus.textContent =
-        "No automatic match was found. You can fill in the details manually.";
+        "No exact artwork match found. You can fill in the details manually.";
       return;
     }
 
@@ -865,9 +943,8 @@ async function lookupMovie() {
     fillEmptyField("poster", found.poster);
 
     movieSearchStatus.textContent = found.poster
-      ? "Title found. Poster and available details have been filled in."
-      : "Title found, but artwork was unavailable. You can still save it.";
-
+      ? "Exact title found. Available details have been filled in."
+      : "Title found, but artwork is unavailable. You can still save it.";
   } catch (error) {
     console.error("Title lookup failed:", error);
     movieSearchStatus.textContent =
@@ -925,11 +1002,16 @@ addForm.addEventListener("submit", async event => {
 
   try {
     let posterURL = String(formData.get("poster") || "").trim();
-    let found = null;
 
     if (!posterURL) {
-      found = await findArtwork(title);
-      posterURL = found?.poster || "";
+      const found = await findArtwork(title);
+
+      if (
+        found &&
+        normaliseTitle(found.title) === normaliseTitle(title)
+      ) {
+        posterURL = found.poster || "";
+      }
     }
 
     const movie = normaliseMovie({
@@ -982,9 +1064,7 @@ addForm.addEventListener("submit", async event => {
       });
     }
 
-    /* The local entry is saved even if the Worker is unavailable. */
     await saveMovieToWorker(movie);
-
   } catch (error) {
     console.error("Could not save the archive entry:", error);
     alert("The entry could not be saved. Check the browser console for details.");
@@ -1032,7 +1112,7 @@ addModal.addEventListener("click", event => {
   if (event.target.hasAttribute("data-add-close")) closeAddModal();
 });
 
-/* DRAGGING: CASE CLICKS OPEN DETAILS; DRAGGING SCROLLS THE SHELF */
+/* DRAGGING THE SHELF */
 
 rail.addEventListener("pointerdown", event => {
   if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -1100,6 +1180,8 @@ rail.addEventListener("pointercancel", event => {
   } catch {}
 });
 
+/* KEYBOARD */
+
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
     closeModal();
@@ -1130,7 +1212,9 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 60000);
 
-/* LOAD COLLECTION */
+/* =========================================================
+   LOAD COLLECTION
+========================================================= */
 
 async function loadMovies() {
   let baseMovies = [];
@@ -1155,7 +1239,6 @@ async function loadMovies() {
     if (!baseMovies.length) {
       baseMovies = fallbackMovies;
     }
-
   } catch (error) {
     console.warn("Using fallback movie data:", error);
     baseMovies = fallbackMovies;
@@ -1179,7 +1262,10 @@ async function loadMovies() {
   buildFilters();
   render();
 
-  /* Retrieve artwork for existing entries that have no poster. */
+  /*
+   * Only missing artwork is automatically fetched.
+   * Existing saved posters are left untouched.
+   */
   hydrateMissingArtwork();
 }
 
@@ -1189,37 +1275,37 @@ async function hydrateMissingArtwork() {
 
     try {
       const found = await findArtwork(movie.title);
-      if (!found?.poster) continue;
+
+      if (
+        !found?.poster ||
+        normaliseTitle(found.title) !== normaliseTitle(movie.title)
+      ) {
+        continue;
+      }
 
       movie.poster = found.poster;
 
       if (!movie.description && found.description) {
         movie.description = found.description;
       }
-
       if (!movie.director && found.director) {
         movie.director = found.director;
       }
-
       if (!movie.language && found.language) {
         movie.language = found.language;
       }
-
       if (!movie.country && found.country) {
         movie.country = found.country;
       }
-
       if (!movie.year && found.year) {
         movie.year = found.year;
       }
-
       if ((!movie.genres || !movie.genres.length) && found.genres) {
         movie.genres = found.genres;
       }
 
       saveOverride(movie);
       saveLocalMovies();
-
     } catch (error) {
       console.warn(`Artwork lookup failed for ${movie.title}:`, error);
     }

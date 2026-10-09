@@ -1096,3 +1096,172 @@ footer {
     transition-duration: .01ms !important;
   }
 }
+
+/* =====================================================
+   MY LITTLE ARCHIVE — WATCH SHELF FINAL OVERRIDES
+   Paste at the VERY END of watch.css
+===================================================== */
+
+/* Keep every case upright */
+#rail .case,
+.rail .case {
+  transform: none !important;
+  rotate: none !important;
+  --tilt: 0deg !important;
+}
+
+/* Keep cases slim, close together and upright */
+#rail,
+.rail {
+  gap: 2px !important;
+  align-items: flex-end !important;
+}
+
+#rail .case,
+.rail .case {
+  flex-shrink: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* A broader collection of muted, archival colours */
+#rail .case:nth-child(12n + 1) {
+  --c: #718b87 !important;
+  --c2: #d5e1d8 !important;
+}
+
+#rail .case:nth-child(12n + 2) {
+  --c: #a77b91 !important;
+  --c2: #ead4df !important;
+}
+
+#rail .case:nth-child(12n + 3) {
+  --c: #7185a7 !important;
+  --c2: #d4dbea !important;
+}
+
+#rail .case:nth-child(12n + 4) {
+  --c: #bd8a6d !important;
+  --c2: #f0d9c5 !important;
+}
+
+#rail .case:nth-child(12n + 5) {
+  --c: #87966b !important;
+  --c2: #dce3c9 !important;
+}
+
+#rail .case:nth-child(12n + 6) {
+  --c: #8e719f !important;
+  --c2: #e3d7eb !important;
+}
+
+#rail .case:nth-child(12n + 7) {
+  --c: #b29a59 !important;
+  --c2: #f0e4b9 !important;
+}
+
+#rail .case:nth-child(12n + 8) {
+  --c: #a85f67 !important;
+  --c2: #ebc6c8 !important;
+}
+
+#rail .case:nth-child(12n + 9) {
+  --c: #568b91 !important;
+  --c2: #c5e1df !important;
+}
+
+#rail .case:nth-child(12n + 10) {
+  --c: #817c70 !important;
+  --c2: #e0d9ca !important;
+}
+
+#rail .case:nth-child(12n + 11) {
+  --c: #b77e48 !important;
+  --c2: #f0d4ae !important;
+}
+
+#rail .case:nth-child(12n) {
+  --c: #625d78 !important;
+  --c2: #d1cde1 !important;
+}
+
+/* Distinct title typography */
+#rail .case-title {
+  font-size: 14px !important;
+  line-height: 1 !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Elegant editorial serif */
+#rail .case.style-elegant .case-title {
+  font-family: "Bodoni 72", Didot, Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+}
+
+/* Romantic italic */
+#rail .case.style-romantic .case-title {
+  font-family: "Baskerville", "Palatino Linotype", Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+}
+
+/* Traditional book typography */
+#rail .case.style-classic .case-title {
+  font-family: "Palatino Linotype", Palatino, Georgia, serif !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+}
+
+/* Clean modern typography */
+#rail .case.style-modern .case-title {
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.5px !important;
+}
+
+/* Dramatic, bold typography */
+#rail .case.style-dramatic .case-title {
+  font-family: Impact, "Arial Narrow", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.4px !important;
+}
+
+/* Minimal typography */
+#rail .case.style-minimal .case-title {
+  font-family: "Courier New", monospace !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.6px !important;
+}
+
+/* Ensure titles stay centred on the case, not underneath */
+#rail .case-text {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+/* Never display poster artwork on the shelf */
+#rail .case .poster,
+#rail .case img {
+  display: none !important;
+}
+
+/* Hide the old title/year labels below the cases */
+#rail .case-label {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  #rail .case-title {
+    font-size: 11px !important;
+  }
+}
+
