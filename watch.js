@@ -1,4 +1,3 @@
-
 "use strict";
 
 /* =========================================================
@@ -41,8 +40,12 @@ const PALETTES = [
 ];
 
 const TITLE_STYLES = [
-  "elegant", "romantic", "classic",
-  "modern", "dramatic", "minimal"
+  "elegant",
+  "romantic",
+  "classic",
+  "modern",
+  "dramatic",
+  "minimal"
 ];
 
 /* ELEMENTS */
@@ -95,7 +98,8 @@ const fallbackMovies = [
     tags: ["slow burn", "classic", "period romance"],
     status: "Want to Watch",
     titleStyle: "romantic",
-    description: "A beloved period romance about Elizabeth Bennet and Mr. Darcy."
+    description:
+      "A beloved period romance about Elizabeth Bennet and Mr. Darcy."
   },
   {
     id: "little-women-2019",
@@ -110,7 +114,8 @@ const fallbackMovies = [
     tags: ["family", "sisters", "period", "coming-of-age"],
     status: "Want to Watch",
     titleStyle: "classic",
-    description: "Four sisters come of age while finding their own ways through love, family and ambition."
+    description:
+      "Four sisters come of age while finding their own ways through love, family and ambition."
   },
   {
     id: "la-la-land-2016",
@@ -125,7 +130,8 @@ const fallbackMovies = [
     tags: ["music", "dreams", "bittersweet", "love"],
     status: "Want to Watch",
     titleStyle: "modern",
-    description: "A musical romance about two dreamers trying to build lives and careers in Los Angeles."
+    description:
+      "A musical romance about two dreamers trying to build lives and careers in Los Angeles."
   },
   {
     id: "grand-budapest-2014",
@@ -140,7 +146,8 @@ const fallbackMovies = [
     tags: ["quirky", "whimsical", "ensemble", "dark comedy"],
     status: "Want to Watch",
     titleStyle: "dramatic",
-    description: "A whimsical caper centred on a legendary hotel concierge and his lobby boy protégé."
+    description:
+      "A whimsical caper centred on a legendary hotel concierge and his lobby boy protégé."
   },
   {
     id: "handmaiden-2016",
@@ -155,7 +162,8 @@ const fallbackMovies = [
     tags: ["psychological", "period", "twist", "slow burn"],
     status: "Want to Watch",
     titleStyle: "elegant",
-    description: "A visually rich psychological romance built around deception, desire and shifting loyalties."
+    description:
+      "A visually rich psychological romance built around deception, desire and shifting loyalties."
   }
 ];
 
@@ -254,14 +262,18 @@ function statusOf(movie) {
 
 function readLocalMovies() {
   try {
-    return JSON.parse(localStorage.getItem("watch-manual-movies") || "[]");
+    return JSON.parse(
+      localStorage.getItem("watch-manual-movies") || "[]"
+    );
   } catch {
     return [];
   }
 }
 
 function saveLocalMovies() {
-  const manualMovies = allMovies.filter(movie => movie.localManual === true);
+  const manualMovies = allMovies.filter(
+    movie => movie.localManual === true
+  );
 
   localStorage.setItem(
     "watch-manual-movies",
@@ -271,7 +283,9 @@ function saveLocalMovies() {
 
 function readOverrides() {
   try {
-    return JSON.parse(localStorage.getItem("watch-movie-overrides") || "{}");
+    return JSON.parse(
+      localStorage.getItem("watch-movie-overrides") || "{}"
+    );
   } catch {
     return {};
   }
@@ -296,9 +310,7 @@ function applyOverrides(movies) {
   }));
 }
 
-/* =========================================================
-   ARTWORK LOOKUP — PREVENT WRONG POSTERS
-========================================================= */
+/* ARTWORK LOOKUP */
 
 function parseOMDb(data) {
   if (!data || data.Response === "False") return null;
@@ -337,7 +349,6 @@ async function findArtwork(title) {
 
   const wanted = normaliseTitle(title);
 
-  /* First: Cloudflare Worker / OMDb. */
   try {
     const response = await fetch(
       `${WORKER_URL}?title=${encodeURIComponent(title)}`,
@@ -345,13 +356,8 @@ async function findArtwork(title) {
     );
 
     if (response.ok) {
-      const data = await response.json();
-      const result = parseOMDb(data);
+      const result = parseOMDb(await response.json());
 
-      /*
-       * Reject a result when its title does not match.
-       * This stops Salaar from receiving The Handmaiden's poster.
-       */
       if (
         result &&
         result.poster &&
@@ -364,7 +370,6 @@ async function findArtwork(title) {
     console.warn("OMDb lookup unavailable:", error);
   }
 
-  /* Second: Wikipedia, but ONLY an exact title match. */
   try {
     const url =
       "https://en.wikipedia.org/w/api.php" +
@@ -426,6 +431,7 @@ async function saveMovieToWorker(movie) {
       "Remote save unavailable. The local copy is preserved.",
       error
     );
+
     return false;
   }
 }
@@ -436,6 +442,7 @@ function valuesFor(movie, key) {
   if (key === "status") return [statusOf(movie)];
   if (key === "genres") return asArray(movie.genres).map(String);
   if (key === "tags") return asArray(movie.tags).map(String);
+
   return movie[key] ? [String(movie[key])] : [];
 }
 
@@ -548,7 +555,185 @@ function matchesFilters(movie) {
   });
 }
 
-/* CASE CREATION — NO POSTERS ON THE SHELF */
+/* TYPOGRAPHY */
+
+const TYPOGRAPHY_FONTS = {
+  serif: 'Georgia, "Times New Roman", serif',
+  sans: "Arial, Helvetica, sans-serif",
+  condensed: '"Arial Narrow", "Roboto Condensed", sans-serif',
+  typewriter: '"Courier New", Courier, monospace',
+  rounded: '"Trebuchet MS", Arial, sans-serif',
+  display: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+  cursive: '"Brush Script MT", "Segoe Script", cursive'
+};
+
+function automaticTypography(movie) {
+  const text = [
+    movie.title,
+    movie.description,
+    ...asArray(movie.genres),
+    ...asArray(movie.tags),
+    movie.titleStyle
+  ].join(" ").toLowerCase();
+
+  if (/romance|romantic|love|gl|bl|yuri|relationship|wedding|heart/.test(text)) {
+    return {
+      fontFamily: TYPOGRAPHY_FONTS.serif,
+      fontSize: "15px",
+      fontWeight: "500",
+      fontStyle: "italic",
+      letterSpacing: "0.15px",
+      color: "#fff8ee"
+    };
+  }
+
+  if (/classic|historical|period|literary|adaptation|elegant|drama/.test(text)) {
+    return {
+      fontFamily: TYPOGRAPHY_FONTS.serif,
+      fontSize: "14px",
+      fontWeight: "600",
+      fontStyle: "normal",
+      letterSpacing: "0.35px",
+      color: "#fff8ee"
+    };
+  }
+
+  if (/thriller|horror|crime|mystery|dark|psychological|dramatic|action/.test(text)) {
+    return {
+      fontFamily: TYPOGRAPHY_FONTS.display,
+      fontSize: "13px",
+      fontWeight: "700",
+      fontStyle: "normal",
+      letterSpacing: "0.8px",
+      color: "#fffaf2"
+    };
+  }
+
+  if (/comedy|sitcom|animation|anime|family|adventure|whimsical|quirky/.test(text)) {
+    return {
+      fontFamily: TYPOGRAPHY_FONTS.rounded,
+      fontSize: "14px",
+      fontWeight: "700",
+      fontStyle: "normal",
+      letterSpacing: "0.1px",
+      color: "#fff8ee"
+    };
+  }
+
+  if (/minimal|modern|sci.?fi|science fiction|technology/.test(text)) {
+    return {
+      fontFamily: TYPOGRAPHY_FONTS.sans,
+      fontSize: "13px",
+      fontWeight: "600",
+      fontStyle: "normal",
+      letterSpacing: "1px",
+      color: "#fff8ee"
+    };
+  }
+
+  return {
+    fontFamily: TYPOGRAPHY_FONTS.serif,
+    fontSize: "14px",
+    fontWeight: "600",
+    fontStyle: "normal",
+    letterSpacing: "0.25px",
+    color: "#fff8ee"
+  };
+}
+
+/* FIX: SUPPORT BOTH FONT ALIASES AND CSS FONT VALUES */
+
+function typographyFor(movie) {
+  if (movie.typographyMode !== "manual") {
+    return automaticTypography(movie);
+  }
+
+  const savedFont = String(movie.manualFont || "serif").trim();
+
+  const fontAliases = {
+    serif: TYPOGRAPHY_FONTS.serif,
+    sans: TYPOGRAPHY_FONTS.sans,
+    condensed: TYPOGRAPHY_FONTS.condensed,
+    typewriter: TYPOGRAPHY_FONTS.typewriter,
+    rounded: TYPOGRAPHY_FONTS.rounded,
+    display: TYPOGRAPHY_FONTS.display,
+    cursive: TYPOGRAPHY_FONTS.cursive,
+    inherit: '"Cormorant Garamond", Georgia, serif'
+  };
+
+  const allowedFonts = [
+    "Georgia, serif",
+    "'Palatino Linotype', Palatino, serif",
+    "'Times New Roman', serif",
+    "'Baskerville', serif",
+    "'Garamond', serif",
+    "'Courier New', monospace",
+    "Arial, sans-serif",
+    "'Trebuchet MS', sans-serif",
+    "Impact, sans-serif"
+  ];
+
+  const fontFamily =
+    fontAliases[savedFont] ||
+    (allowedFonts.includes(savedFont)
+      ? savedFont
+      : TYPOGRAPHY_FONTS.serif);
+
+  const size = Number(movie.manualFontSize);
+  const spacing = Number(movie.manualLetterSpacing);
+  const weight = String(movie.manualFontWeight || "600");
+
+  return {
+    fontFamily,
+    fontSize: `${Math.min(28, Math.max(8, Number.isFinite(size) && size ? size : 14))}px`,
+    fontWeight: ["400", "500", "600", "700"].includes(weight)
+      ? weight
+      : "600",
+    fontStyle: movie.manualFontStyle === "italic" ? "italic" : "normal",
+    letterSpacing: `${Math.min(5, Math.max(-1, Number.isFinite(spacing) ? spacing : 0))}px`,
+    color: /^#[0-9a-f]{6}$/i.test(movie.manualFontColor || "")
+      ? movie.manualFontColor
+      : "#fff8ee"
+  };
+}
+
+function applyTypographyToCase(element, movie) {
+  const title = element.querySelector(".case-title");
+  if (!title) return;
+
+  const style = typographyFor(movie);
+
+  title.style.fontFamily = style.fontFamily;
+  title.style.fontSize = style.fontSize;
+  title.style.fontWeight = style.fontWeight;
+  title.style.fontStyle = style.fontStyle;
+  title.style.letterSpacing = style.letterSpacing;
+  title.style.color = style.color;
+}
+
+function setTypographyFormField(name, value) {
+  const field =
+    addForm.elements.namedItem(name) ||
+    document.getElementById(name);
+
+  if (field && value !== undefined && value !== null) {
+    field.value = value;
+  }
+}
+
+function readTypographyForm(formData) {
+  return {
+    typographyMode: String(formData.get("typographyMode") || "automatic"),
+    manualFont: String(formData.get("manualFont") || "serif"),
+    manualFontSize: Number(formData.get("manualFontSize") || 14),
+    manualFontWeight: String(formData.get("manualFontWeight") || "600"),
+    manualFontStyle: String(formData.get("manualFontStyle") || "normal"),
+    manualLetterSpacing: Number(formData.get("manualLetterSpacing") || 0),
+    manualFontColor: String(formData.get("manualFontColor") || "#fff8ee")
+  };
+}
+
+/* CD CASE CREATION */
 
 function makeCase(movie) {
   const [c, c2] = paletteFor(movie);
@@ -576,6 +761,8 @@ function makeCase(movie) {
       <div class="case-title">${escapeHTML(movie.title)}</div>
     </div>
   `;
+
+  applyTypographyToCase(element, movie);
 
   element.addEventListener("keydown", event => {
     if (event.key === "Enter" || event.key === " ") {
@@ -638,7 +825,7 @@ function openDetail(id) {
         ${
           movie.poster
             ? `<img class="detail-poster-image" src="${escapeHTML(movie.poster)}" alt="Poster for ${escapeHTML(movie.title)}">`
-            : `<div class="poster-missing">${escapeHTML(movie.title)}</div>`
+            : `<div class="poster-missing">${escapeHTML(movie.title)} — poster unavailable</div>`
         }
       </div>
 
@@ -705,9 +892,11 @@ function openDetail(id) {
       poster.remove();
 
       const art = detailContent.querySelector(".detail-art");
+      if (!art || art.querySelector(".poster-missing")) return;
+
       const fallback = document.createElement("div");
       fallback.className = "poster-missing";
-      fallback.textContent = movie.title;
+      fallback.textContent = `${movie.title} — poster unavailable`;
       art.appendChild(fallback);
     });
   }
@@ -751,7 +940,6 @@ function openDetail(id) {
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 
-  /* If saved artwork is missing, retry lookup. */
   if (!movie.poster) {
     fetchArtworkForExistingMovie(movie);
   }
@@ -792,18 +980,23 @@ async function fetchArtworkForExistingMovie(movie) {
     if (!movie.description && found.description) {
       movie.description = found.description;
     }
+
     if (!movie.director && found.director) {
       movie.director = found.director;
     }
+
     if (!movie.language && found.language) {
       movie.language = found.language;
     }
+
     if (!movie.country && found.country) {
       movie.country = found.country;
     }
+
     if (!movie.year && found.year) {
       movie.year = found.year;
     }
+
     if ((!movie.genres || !movie.genres.length) && found.genres) {
       movie.genres = found.genres;
     }
@@ -832,8 +1025,25 @@ function openAddModal() {
     "Find a title or enter its details manually. You can edit everything before saving.";
 
   addForm.querySelector('[type="submit"]').textContent = "SAVE TO ARCHIVE";
+
   movieSearchStatus.textContent =
     "Artwork and details are retrieved automatically when available.";
+
+  const typographyModeField =
+    addForm.elements.namedItem("typographyMode") ||
+    document.getElementById("typographyMode");
+
+  if (typographyModeField) {
+    typographyModeField.value = "automatic";
+    typographyModeField.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  setTypographyFormField("manualFont", "serif");
+  setTypographyFormField("manualFontSize", 14);
+  setTypographyFormField("manualFontWeight", "600");
+  setTypographyFormField("manualFontStyle", "normal");
+  setTypographyFormField("manualLetterSpacing", 0);
+  setTypographyFormField("manualFontColor", "#fff8ee");
 
   addModal.classList.add("open");
   addModal.setAttribute("aria-hidden", "false");
@@ -876,6 +1086,22 @@ function openEditModal(movie) {
   set("watchLink", movie.watchLink);
   set("description", movie.description);
   set("personalNote", movie.personalNote);
+
+  setTypographyFormField("typographyMode", movie.typographyMode || "automatic");
+  setTypographyFormField("manualFont", movie.manualFont || "serif");
+  setTypographyFormField("manualFontSize", movie.manualFontSize ?? 14);
+  setTypographyFormField("manualFontWeight", movie.manualFontWeight || "600");
+  setTypographyFormField("manualFontStyle", movie.manualFontStyle || "normal");
+  setTypographyFormField("manualLetterSpacing", movie.manualLetterSpacing ?? 0);
+  setTypographyFormField("manualFontColor", movie.manualFontColor || "#fff8ee");
+
+  const typographyModeField =
+    addForm.elements.namedItem("typographyMode") ||
+    document.getElementById("typographyMode");
+
+  if (typographyModeField) {
+    typographyModeField.dispatchEvent(new Event("change", { bubbles: true }));
+  }
 
   movieLookup.value = movie.title;
   movieSearchStatus.textContent =
@@ -1035,6 +1261,7 @@ addForm.addEventListener("submit", async event => {
       watchLink: String(formData.get("watchLink") || "").trim(),
       description: String(formData.get("description") || "").trim(),
       personalNote: String(formData.get("personalNote") || "").trim(),
+      ...readTypographyForm(formData),
       localManual: existing?.localManual === true || !existing
     }, allMovies.length);
 
@@ -1211,9 +1438,7 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 60000);
 
-/* =========================================================
-   LOAD COLLECTION — MERGE DUPLICATES SAFELY
-========================================================= */
+/* LOAD COLLECTION — MERGE DUPLICATES SAFELY */
 
 function movieMatchKey(movie) {
   const title = normaliseTitle(movie.title);
@@ -1291,9 +1516,9 @@ async function loadMovies() {
       return;
     }
 
-    // Merge useful values without replacing stable IDs or saved status.
     for (const [key, value] of Object.entries(movie)) {
       if (key === "id" || key === "status") continue;
+
       if (hasUsefulValue(value)) {
         existing[key] = value;
       }
@@ -1305,12 +1530,12 @@ async function loadMovies() {
     byId.set(existing.id, existing);
 
     const mergedKey = movieMatchKey(existing);
+
     if (mergedKey) {
       byMatchKey.set(mergedKey, existing);
     }
   }
 
-  // JSON entries first; matching local copies merge into them.
   baseMovies.forEach(addOrMerge);
   manualMovies.forEach(addOrMerge);
 
@@ -1331,10 +1556,6 @@ async function loadMovies() {
   buildFilters();
   render();
 
-  /*
-   * Only missing artwork is automatically fetched.
-   * Existing saved posters are left untouched.
-   */
   hydrateMissingArtwork();
 }
 
@@ -1357,18 +1578,23 @@ async function hydrateMissingArtwork() {
       if (!movie.description && found.description) {
         movie.description = found.description;
       }
+
       if (!movie.director && found.director) {
         movie.director = found.director;
       }
+
       if (!movie.language && found.language) {
         movie.language = found.language;
       }
+
       if (!movie.country && found.country) {
         movie.country = found.country;
       }
+
       if (!movie.year && found.year) {
         movie.year = found.year;
       }
+
       if ((!movie.genres || !movie.genres.length) && found.genres) {
         movie.genres = found.genres;
       }

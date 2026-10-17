@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Libre+Baskerville:wght@400;700&family=Montserrat:wght@500;600;700&display=swap');
 
 :root {
@@ -23,18 +24,15 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 50% 18%, rgba(255,255,255,.72), transparent 42%),
     linear-gradient(180deg, #f7f4ee 0%, #f1ede5 100%);
   color: var(--ink);
   font-family: var(--serif);
-  overflow-x: hidden;
 }
 
-button,
-input,
-select,
-textarea {
+button, input, select, textarea {
   font: inherit;
 }
 
@@ -67,9 +65,7 @@ button:disabled {
   border-bottom: 1px solid var(--line);
 }
 
-.home,
-.clock,
-.crumb {
+.home, .clock, .crumb {
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: .16em;
@@ -77,11 +73,11 @@ button:disabled {
 }
 
 .home {
-  text-decoration: none;
+  width: max-content;
+  padding: 9px 13px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 9px 13px;
-  width: max-content;
+  text-decoration: none;
   transition: .2s;
 }
 
@@ -108,40 +104,36 @@ button:disabled {
 /* HERO */
 
 .hero {
-  text-align: center;
   padding: 76px 20px 40px;
+  text-align: center;
 }
 
-.eyebrow,
-.sub,
-.collection-head,
-.result-row,
-footer {
+.eyebrow, .sub, .collection-head, .result-row, footer {
   font-family: var(--mono);
   letter-spacing: .18em;
   text-transform: uppercase;
 }
 
 .eyebrow {
-  font-size: 10px;
-  color: #918b82;
   margin-bottom: 22px;
+  color: #918b82;
+  font-size: 10px;
 }
 
 .hero h1 {
+  margin: 0;
   font-size: clamp(56px, 7vw, 104px);
-  line-height: .82;
   font-weight: 400;
   font-style: italic;
+  line-height: .82;
   letter-spacing: -.045em;
-  margin: 0;
 }
 
 .sub {
+  margin: 29px 0 0;
+  color: #9a9389;
   font-size: 9px;
   line-height: 1.8;
-  color: #9a9389;
-  margin: 29px 0 0;
 }
 
 /* SEARCH */
@@ -153,15 +145,15 @@ footer {
 
 .search-wrap {
   height: 54px;
-  border-bottom: 1px solid rgba(41,39,35,.28);
   display: flex;
   align-items: center;
   gap: 12px;
+  border-bottom: 1px solid rgba(41,39,35,.28);
 }
 
 .search-wrap > span {
-  font-size: 25px;
   color: #aaa39a;
+  font-size: 25px;
 }
 
 .search-wrap input {
@@ -170,33 +162,32 @@ footer {
   border: 0;
   outline: 0;
   background: transparent;
+  color: var(--ink);
   font-family: var(--serif);
   font-size: 21px;
   font-style: italic;
-  color: var(--ink);
 }
 
 .search-wrap input::placeholder {
   color: #aaa49b;
 }
 
-.search-wrap button,
-.result-row button {
+.search-wrap button, .result-row button {
   border: 0;
   background: transparent;
+  color: #9a938a;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .13em;
-  color: #9a938a;
 }
 
 /* FILTERS */
 
 .filters {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 8px;
   padding: 18px 0 10px;
 }
 
@@ -205,18 +196,17 @@ footer {
 }
 
 .filter > button {
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,.2);
-  border-radius: 999px;
   padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.2);
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .1em;
   text-transform: uppercase;
 }
 
-.filter > button.active,
-.filter > button:hover {
+.filter > button.active, .filter > button:hover {
   background: #2d2b27;
   color: #f7f4ee;
 }
@@ -230,16 +220,16 @@ footer {
   max-height: 260px;
   overflow: auto;
   padding: 9px;
-  background: rgba(249,247,242,.98);
   border: 1px solid var(--line);
+  background: rgba(249,247,242,.98);
   box-shadow: 0 16px 35px rgba(35,31,25,.12);
   text-align: left;
 }
 
 .menu label {
   display: flex;
-  gap: 9px;
   align-items: center;
+  gap: 9px;
   padding: 8px 6px;
   font-family: var(--mono);
   font-size: 9px;
@@ -261,8 +251,8 @@ footer {
   align-items: center;
   gap: 12px;
   padding-top: 7px;
-  font-size: 9px;
   color: #8f8980;
+  font-size: 9px;
 }
 
 /* COLLECTION */
@@ -277,16 +267,16 @@ footer {
   align-items: center;
   gap: 12px;
   padding: 0 12px 12px;
-  font-size: 9px;
   color: #928c84;
+  font-size: 9px;
 }
 
 .add-button {
+  padding: 10px 16px;
   border: 1px solid rgba(90,59,39,.35);
+  border-radius: 999px;
   background: rgba(118,80,54,.08);
   color: #6a4933;
-  border-radius: 999px;
-  padding: 10px 16px;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .1em;
@@ -302,7 +292,7 @@ footer {
   text-align: right;
 }
 
-/* RACK AND WOODEN SHELF */
+/* SHELF */
 
 .rack {
   position: relative;
@@ -314,7 +304,7 @@ footer {
   height: 100%;
   display: flex;
   align-items: flex-end;
-  gap: 2px;
+  gap: 3px;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 25px max(8vw, 100px) 8px;
@@ -360,10 +350,10 @@ footer {
 
 .edge-fade {
   position: absolute;
+  z-index: 10;
   top: 0;
   bottom: 0;
   width: 80px;
-  z-index: 10;
   pointer-events: none;
 }
 
@@ -381,26 +371,23 @@ footer {
   position: relative;
   z-index: 15;
   height: 22px;
-  margin-left: -34px;
   width: calc(100% + 68px);
+  margin-left: -34px;
   background:
     repeating-linear-gradient(90deg, transparent 0 68px, rgba(255,220,174,.08) 69px 71px),
     linear-gradient(180deg, #b1825b 0%, #8a5b3d 23%, #6b422b 66%, #4b2e20 100%);
   border-top: 3px solid #c09268;
   border-bottom: 5px solid #44291d;
-  box-shadow:
-    0 -4px 12px rgba(63,41,25,.2),
-    0 6px 12px rgba(63,41,25,.12);
+  box-shadow: 0 -4px 12px rgba(63,41,25,.2), 0 6px 12px rgba(63,41,25,.12);
 }
 
-/* COLOURED ACRYLIC CD CASES */
+/* COLOURED ACRYLIC CASES */
 
 .case {
   --c: #8c7780;
   --c2: #d8c3bc;
   --w: 74px;
   --h: 285px;
-  --tilt: 0deg;
 
   position: relative;
   flex: 0 0 var(--w);
@@ -408,16 +395,17 @@ footer {
   height: var(--h);
   margin: 0;
   align-self: flex-end;
-  transform: rotate(var(--tilt));
-  transform-origin: bottom center;
+  overflow: hidden;
+  transform: none;
   cursor: pointer;
-  transition: transform .22s ease, filter .22s ease;
   -webkit-tap-highlight-color: transparent;
+  transition: transform .22s ease, filter .22s ease;
 }
 
 .case:hover {
-  transform: translateY(-8px) rotate(var(--tilt));
-  z-index: 10;
+  transform: translateY(-8px);
+  z-index: 30;
+  filter: saturate(1.08);
 }
 
 .case-art {
@@ -451,79 +439,98 @@ footer {
   pointer-events: none;
 }
 
-/* TITLE ON THE CASE RIM — NOT BELOW THE CASE */
+/* SPINE TITLE — inline typography from JavaScript takes priority */
 
 .case-text {
   position: absolute;
-  inset: 0;
   z-index: 5;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 8px 3px;
   overflow: hidden;
   pointer-events: none;
 }
 
 .case-title {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
   display: block;
   max-width: 100%;
-  max-height: 80%;
+  max-height: 88%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
   font-family: var(--serif);
-  font-size: 15px;
-  line-height: .95;
-  text-align: center;
+  font-size: 19px;
+  line-height: 1;
   font-weight: 600;
+  text-align: center;
   color: rgba(38,33,29,.95);
   text-shadow: 0 1px 1px rgba(255,255,255,.35);
 }
 
+/* Default title styles are fallbacks only.
+   Saved inline manual typography is not overridden. */
+
 .case.style-elegant .case-title {
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 19px;
+  font-size: 21px;
   font-style: italic;
   font-weight: 700;
 }
 
 .case.style-romantic .case-title {
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 16px;
+  font-size: 19px;
   font-style: italic;
 }
 
 .case.style-classic .case-title {
   font-family: "Libre Baskerville", Georgia, serif;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
 }
 
 .case.style-modern .case-title {
   font-family: "Montserrat", sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
 }
 
 .case.style-dramatic .case-title {
   font-family: var(--serif);
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 700;
 }
 
 .case.style-minimal .case-title {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: .03em;
 }
 
-/* Never display posters or floating title/year labels on the shelf */
+/* Consistent muted palette */
+
+#rail .case:nth-child(12n + 1) { --c: #718b87; --c2: #d5e1d8; }
+#rail .case:nth-child(12n + 2) { --c: #a77b91; --c2: #ead4df; }
+#rail .case:nth-child(12n + 3) { --c: #7185a7; --c2: #d4dbea; }
+#rail .case:nth-child(12n + 4) { --c: #bd8a6d; --c2: #f0d9c5; }
+#rail .case:nth-child(12n + 5) { --c: #87966b; --c2: #dce3c9; }
+#rail .case:nth-child(12n + 6) { --c: #8e719f; --c2: #e3d7eb; }
+#rail .case:nth-child(12n + 7) { --c: #b29a59; --c2: #f0e4b9; }
+#rail .case:nth-child(12n + 8) { --c: #a85f67; --c2: #ebc6c8; }
+#rail .case:nth-child(12n + 9) { --c: #568b91; --c2: #c5e1df; }
+#rail .case:nth-child(12n + 10) { --c: #817c70; --c2: #e0d9ca; }
+#rail .case:nth-child(12n + 11) { --c: #b77e48; --c2: #f0d4ae; }
+#rail .case:nth-child(12n) { --c: #625d78; --c2: #d1cde1; }
+
+/* No posters on the shelf */
 
 .case .poster,
 .case .poster img,
+.case img,
 .case-label {
   display: none !important;
 }
@@ -533,23 +540,23 @@ footer {
 .empty {
   padding: 30px 15px 40px;
   text-align: center;
+  color: #948b81;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .15em;
-  color: #948b81;
 }
 
 .empty p {
+  color: #aaa196;
   font-family: var(--serif);
   font-size: 17px;
   letter-spacing: 0;
-  color: #aaa196;
 }
 
 .empty button {
+  padding: 10px 15px;
   border: 1px solid var(--line);
   background: transparent;
-  padding: 10px 15px;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .1em;
@@ -559,17 +566,17 @@ footer {
 
 footer {
   padding: 50px 20px 20px;
+  color: #aaa197;
   text-align: center;
   font-size: 9px;
-  color: #aaa197;
 }
 
 /* MODALS */
 
 .modal {
   position: fixed;
-  inset: 0;
   z-index: 100;
+  inset: 0;
   display: none;
   padding: 22px;
 }
@@ -585,12 +592,11 @@ footer {
   backdrop-filter: blur(7px);
 }
 
-.detail,
-.add-card {
+.detail, .add-card {
   position: absolute;
-  left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: min(975px, calc(100vw - 44px));
   max-height: calc(100vh - 44px);
   overflow: auto;
@@ -604,54 +610,54 @@ footer {
 
 .close {
   position: absolute;
+  z-index: 5;
   top: 13px;
   right: 18px;
-  z-index: 5;
   border: 0;
   background: transparent;
-  font-size: 30px;
   color: #756f67;
+  font-size: 30px;
   line-height: 1;
 }
 
-/* DETAIL POSTER — SHOWN ONLY INSIDE DETAIL MODAL */
+/* DETAILS AND POSTER */
 
 .detail-grid {
   display: grid;
-  grid-template-columns: 260px minmax(0,1fr);
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
   gap: 38px;
 }
 
 .detail-art {
-  min-height: 390px;
-  border-radius: 3px;
   position: relative;
+  min-height: 390px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(150deg, var(--c2,#d8c3bc), var(--c,#8c7780));
+  border-radius: 3px;
+  background: linear-gradient(150deg, var(--c2, #d8c3bc), var(--c, #8c7780));
   box-shadow: 10px 15px 30px rgba(0,0,0,.14);
 }
 
 .detail-poster-image {
   display: block;
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
-  padding: 10px;
+  min-height: 390px;
   object-fit: contain;
+  object-position: center;
+  padding: 0;
   background: #eee8de;
 }
 
 .poster-missing {
   padding: 24px;
+  color: #71685f;
   text-align: center;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .12em;
-  color: #71685f;
 }
 
 .detail-art-title {
@@ -659,11 +665,10 @@ footer {
   inset: 25px;
   display: flex;
   align-items: flex-end;
-  font-size: 45px;
-  line-height: .88;
-  font-style: italic;
-  z-index: 2;
   color: #fff;
+  font-size: 45px;
+  font-style: italic;
+  line-height: .88;
   text-shadow: 0 2px 10px rgba(0,0,0,.28);
   pointer-events: none;
 }
@@ -677,26 +682,27 @@ footer {
 }
 
 .detail-info h2 {
-  font-size: 58px;
-  line-height: .9;
-  font-weight: 400;
-  letter-spacing: -.025em;
   margin: 0 25px 16px 0;
   overflow-wrap: anywhere;
+  font-size: 58px;
+  font-weight: 400;
+  line-height: .9;
+  letter-spacing: -.025em;
 }
 
 .detail-info .director {
-  font-size: 20px;
-  color: #716b64;
   margin-bottom: 25px;
+  color: #716b64;
+  font-size: 20px;
 }
 
 .description {
+  max-width: 650px;
+  color: #575149;
   font-size: 19px;
   line-height: 1.4;
-  color: #575149;
-  max-width: 650px;
   white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
 .meta-grid {
@@ -707,13 +713,13 @@ footer {
 }
 
 .pill {
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
   font-family: var(--mono);
   font-size: 8px;
   letter-spacing: .07em;
   text-transform: uppercase;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 7px 9px;
 }
 
 .detail-actions {
@@ -724,12 +730,12 @@ footer {
 }
 
 .detail-actions button {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: transparent;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .06em;
-  border: 1px solid var(--line);
-  background: transparent;
-  padding: 10px 12px;
 }
 
 .detail-actions button.active {
@@ -742,9 +748,9 @@ footer {
 }
 
 .edit-button {
+  padding: 10px 13px;
   border: 1px solid var(--line);
   background: transparent;
-  padding: 10px 13px;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .12em;
@@ -763,36 +769,39 @@ footer {
 }
 
 .archive-note span {
+  color: #8d877e;
   font-family: var(--mono);
   font-size: 8px;
   letter-spacing: .12em;
-  color: #8d877e;
 }
 
 .archive-note p {
   margin: 8px 0 0;
+  color: #575149;
   font-size: 17px;
   line-height: 1.4;
-  color: #575149;
+  white-space: pre-line;
 }
 
 .watch-source {
   margin-top: 20px;
+  color: #6d675f;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: #6d675f;
+  overflow-wrap: anywhere;
 }
 
 .watch-link {
   display: inline-block;
   margin-top: 20px;
+  color: #45413c;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: #45413c;
+  overflow-wrap: anywhere;
 }
 
 .detail-nav {
@@ -819,9 +828,9 @@ footer {
 }
 
 .add-heading {
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 22px;
   margin-bottom: 25px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
 }
 
 .add-heading .eyebrow {
@@ -831,16 +840,16 @@ footer {
 .add-heading h2 {
   margin: 0;
   font-size: 52px;
-  line-height: .95;
   font-weight: 400;
   font-style: italic;
+  line-height: .95;
 }
 
 .add-heading p {
   margin: 12px 0 0;
+  color: #817a72;
   font-size: 18px;
   line-height: 1.4;
-  color: #817a72;
 }
 
 .movie-search-box {
@@ -852,15 +861,15 @@ footer {
 
 .movie-search-box > label {
   display: block;
+  color: #777067;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .1em;
-  color: #777067;
 }
 
 .movie-search-row {
   display: grid;
-  grid-template-columns: minmax(0,1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
   margin-top: 7px;
 }
@@ -868,21 +877,21 @@ footer {
 .movie-search-row input {
   width: 100%;
   min-width: 0;
-  border: 1px solid rgba(41,39,35,.2);
-  background: rgba(255,255,255,.5);
   padding: 11px 12px;
+  border: 1px solid rgba(41,39,35,.2);
   outline: none;
+  background: rgba(255,255,255,.5);
+  color: var(--ink);
   font-family: var(--serif);
   font-size: 17px;
-  color: var(--ink);
 }
 
 .movie-search-box small {
   display: block;
   margin-top: 8px;
+  color: #8e867d;
   font-size: 9px;
   letter-spacing: .02em;
-  color: #8e867d;
   text-transform: none;
 }
 
@@ -896,41 +905,53 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 7px;
+  color: #777067;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .08em;
-  color: #777067;
 }
 
-.form-grid label.wide {
+.form-grid label.wide, .form-grid .wide {
   grid-column: 1 / -1;
 }
 
-.form-grid input,
-.form-grid select,
-.form-grid textarea {
+.form-grid input, .form-grid select, .form-grid textarea {
   width: 100%;
   min-width: 0;
+  padding: 11px 12px;
   border: 1px solid rgba(41,39,35,.2);
   border-radius: 0;
-  background: rgba(255,255,255,.35);
-  padding: 11px 12px;
   outline: none;
+  background: rgba(255,255,255,.35);
+  color: var(--ink);
   font-family: var(--serif);
   font-size: 17px;
   letter-spacing: 0;
-  color: var(--ink);
 }
 
 .form-grid textarea {
   resize: vertical;
 }
 
-.form-grid input:focus,
-.form-grid select:focus,
-.form-grid textarea:focus {
+.form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus {
   border-color: rgba(41,39,35,.5);
   background: rgba(255,255,255,.65);
+}
+
+.form-grid input[type="color"] {
+  min-height: 43px;
+  padding: 4px;
+}
+
+.typography-grid {
+  margin-top: 14px;
+}
+
+.typography-note {
+  color: #817a72;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.4;
 }
 
 .add-actions {
@@ -942,8 +963,7 @@ footer {
   border-top: 1px solid var(--line);
 }
 
-.primary-button,
-.secondary-button {
+.primary-button, .secondary-button {
   padding: 11px 16px;
   font-family: var(--mono);
   font-size: 9px;
@@ -955,6 +975,10 @@ footer {
   border: 1px solid #5a3b27;
   background: #5a3b27;
   color: #f7f1e7;
+}
+
+.primary-button:hover {
+  background: #704b32;
 }
 
 .secondary-button {
@@ -977,8 +1001,7 @@ footer {
     display: none;
   }
 
-  .clock,
-  .home {
+  .clock, .home {
     font-size: 8px;
   }
 
@@ -987,7 +1010,7 @@ footer {
   }
 
   .hero h1 {
-    font-size: clamp(43px,10vw,58px);
+    font-size: clamp(43px, 10vw, 58px);
     line-height: .9;
   }
 
@@ -1022,9 +1045,9 @@ footer {
   }
 
   .rail {
-    padding-left: 60px;
-    padding-right: 60px;
-    gap: 2px;
+    gap: 3px;
+    padding-right: 35px;
+    padding-left: 35px;
   }
 
   .arrow {
@@ -1038,7 +1061,31 @@ footer {
   }
 
   .case-title {
+    font-size: 14px;
+  }
+
+  .case.style-elegant .case-title {
+    font-size: 16px;
+  }
+
+  .case.style-romantic .case-title {
+    font-size: 15px;
+  }
+
+  .case.style-classic .case-title {
+    font-size: 13px;
+  }
+
+  .case.style-modern .case-title {
     font-size: 12px;
+  }
+
+  .case.style-dramatic .case-title {
+    font-size: 15px;
+  }
+
+  .case.style-minimal .case-title {
+    font-size: 11px;
   }
 
   .detail {
@@ -1051,7 +1098,15 @@ footer {
   }
 
   .detail-art {
-    min-height: 320px;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 2 / 3;
+    max-height: 440px;
+  }
+
+  .detail-poster-image {
+    min-height: 0;
+    height: 100%;
   }
 
   .detail-info h2 {
@@ -1070,7 +1125,7 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  .form-grid label.wide {
+  .form-grid label.wide, .form-grid .wide {
     grid-column: auto;
   }
 
@@ -1082,186 +1137,14 @@ footer {
     flex-direction: column-reverse;
   }
 
-  .primary-button,
-  .secondary-button {
+  .primary-button, .secondary-button {
     width: 100%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
   }
 }
-
-/* =====================================================
-   MY LITTLE ARCHIVE — WATCH SHELF FINAL OVERRIDES
-   Paste at the VERY END of watch.css
-===================================================== */
-
-/* Keep every case upright */
-#rail .case,
-.rail .case {
-  transform: none !important;
-  rotate: none !important;
-  --tilt: 0deg !important;
-}
-
-/* Keep cases slim, close together and upright */
-#rail,
-.rail {
-  gap: 2px !important;
-  align-items: flex-end !important;
-}
-
-#rail .case,
-.rail .case {
-  flex-shrink: 0 !important;
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-/* A broader collection of muted, archival colours */
-#rail .case:nth-child(12n + 1) {
-  --c: #718b87 !important;
-  --c2: #d5e1d8 !important;
-}
-
-#rail .case:nth-child(12n + 2) {
-  --c: #a77b91 !important;
-  --c2: #ead4df !important;
-}
-
-#rail .case:nth-child(12n + 3) {
-  --c: #7185a7 !important;
-  --c2: #d4dbea !important;
-}
-
-#rail .case:nth-child(12n + 4) {
-  --c: #bd8a6d !important;
-  --c2: #f0d9c5 !important;
-}
-
-#rail .case:nth-child(12n + 5) {
-  --c: #87966b !important;
-  --c2: #dce3c9 !important;
-}
-
-#rail .case:nth-child(12n + 6) {
-  --c: #8e719f !important;
-  --c2: #e3d7eb !important;
-}
-
-#rail .case:nth-child(12n + 7) {
-  --c: #b29a59 !important;
-  --c2: #f0e4b9 !important;
-}
-
-#rail .case:nth-child(12n + 8) {
-  --c: #a85f67 !important;
-  --c2: #ebc6c8 !important;
-}
-
-#rail .case:nth-child(12n + 9) {
-  --c: #568b91 !important;
-  --c2: #c5e1df !important;
-}
-
-#rail .case:nth-child(12n + 10) {
-  --c: #817c70 !important;
-  --c2: #e0d9ca !important;
-}
-
-#rail .case:nth-child(12n + 11) {
-  --c: #b77e48 !important;
-  --c2: #f0d4ae !important;
-}
-
-#rail .case:nth-child(12n) {
-  --c: #625d78 !important;
-  --c2: #d1cde1 !important;
-}
-
-/* Distinct title typography */
-#rail .case-title {
-  font-size: 14px !important;
-  line-height: 1 !important;
-  font-weight: 600 !important;
-  letter-spacing: 0 !important;
-}
-
-/* Elegant editorial serif */
-#rail .case.style-elegant .case-title {
-  font-family: "Bodoni 72", Didot, Georgia, serif !important;
-  font-style: italic !important;
-  font-weight: 500 !important;
-}
-
-/* Romantic italic */
-#rail .case.style-romantic .case-title {
-  font-family: "Baskerville", "Palatino Linotype", Georgia, serif !important;
-  font-style: italic !important;
-  font-weight: 400 !important;
-}
-
-/* Traditional book typography */
-#rail .case.style-classic .case-title {
-  font-family: "Palatino Linotype", Palatino, Georgia, serif !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-}
-
-/* Clean modern typography */
-#rail .case.style-modern .case-title {
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.5px !important;
-}
-
-/* Dramatic, bold typography */
-#rail .case.style-dramatic .case-title {
-  font-family: Impact, "Arial Narrow", sans-serif !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.4px !important;
-}
-
-/* Minimal typography */
-#rail .case.style-minimal .case-title {
-  font-family: "Courier New", monospace !important;
-  font-style: normal !important;
-  font-weight: 500 !important;
-  letter-spacing: -0.6px !important;
-}
-
-/* Ensure titles stay centred on the case, not underneath */
-#rail .case-text {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  pointer-events: none !important;
-}
-
-/* Never display poster artwork on the shelf */
-#rail .case .poster,
-#rail .case img {
-  display: none !important;
-}
-
-/* Hide the old title/year labels below the cases */
-#rail .case-label {
-  display: none !important;
-}
-
-@media (max-width: 700px) {
-  #rail .case-title {
-    font-size: 11px !important;
-  }
-}
-
