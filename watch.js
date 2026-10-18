@@ -63,6 +63,160 @@ const movieLookup = document.getElementById("movieLookup");
 const movieSearchStatus = document.getElementById("movieSearchStatus");
 const findMovieButton = document.getElementById("findMovie");
 
+/* LIVE POSTER PREVIEW IN THE ADD / EDIT FORM */
+const addPosterPreview = document.getElementById("addPosterPreview");
+const addPosterPreviewImage = document.getElementById("addPosterPreviewImage");
+const addPosterPreviewMessage = document.getElementById("addPosterPreviewMessage");
+const addPosterField = addForm.elements.namedItem("poster");
+
+function updateAddPosterPreview(url) {
+  if (!addPosterPreview || !addPosterPreviewImage || !addPosterPreviewMessage) return;
+
+  const posterURL = String(
+    url !== undefined ? url : (addPosterField?.value || "")
+  ).trim();
+
+  addPosterPreviewImage.onerror = null;
+  addPosterPreviewImage.removeAttribute("src");
+
+  if (!posterURL) {
+    addPosterPreview.hidden = true;
+    return;
+  }
+
+  addPosterPreview.hidden = false;
+  addPosterPreviewMessage.textContent = "Loading poster…";
+
+  addPosterPreviewImage.onload = () => {
+    addPosterPreviewMessage.textContent = "Poster preview loaded.";
+  };
+
+  addPosterPreviewImage.onerror = () => {
+    addPosterPreviewMessage.textContent =
+      "This poster could not be previewed. Check the image URL.";
+  };
+
+  addPosterPreviewImage.src = posterURL;
+}
+
+addPosterField?.addEventListener("input", () => updateAddPosterPreview());
+
+/* MULTISELECT CONTROLS */
+
+const multiSelectValues = new Map();
+
+function setupMultiSelect(id, fieldName, separator = ", ") {
+  const root = document.getElementById(id);
+  if (!root) return;
+
+  const options = root.querySelector(".multi-options");
+  const selected = root.querySelector(".multi-selected");
+  const customInput = root.querySelector(".multi-custom input");
+  const addButton = root.querySelector(".multi-add");
+  const hidden = root.querySelector(`input[name="${fieldName}"]`);
+  const values = new Set();
+
+  multiSelectValues.set(fieldName, values);
+
+  function sync() {
+    hidden.value = [...values].join(separator);
+    selected.replaceChildren();
+
+    values.forEach(value => {
+      const chip = document.createElement("span");
+      chip.className = "multi-chip";
+      chip.append(document.createTextNode(value + " "));
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "×";
+      remove.setAttribute("aria-label", "Remove " + value);
+
+      remove.addEventListener("click", () => {
+        values.delete(value);
+        sync();
+      });
+
+      chip.append(remove);
+      selected.append(chip);
+    });
+  }
+
+  function addValue(value) {
+    value = value.trim();
+    if (!value) return;
+
+    const existing = [...values].some(
+      item => item.toLowerCase() === value.toLowerCase()
+    );
+
+    if (!existing) values.add(value);
+    sync();
+  }
+
+  options.addEventListener("change", () => {
+    addValue(options.value);
+    options.selectedIndex = 0;
+  });
+
+  addButton.addEventListener("click", () => {
+    addValue(customInput.value);
+    customInput.value = "";
+  });
+
+  customInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addButton.click();
+    }
+  });
+
+  root.addValues = items => {
+    values.clear();
+    items.forEach(addValue);
+    sync();
+  };
+
+  root.clearValues = () => {
+    values.clear();
+    sync();
+  };
+}
+
+setupMultiSelect("representationSelect", "relationship");
+setupMultiSelect("genreSelect", "genres");
+setupMultiSelect("tagSelect", "tags");
+
+function setMultiSelectValues(fieldName, value) {
+  const idByField = {
+    relationship: "representationSelect",
+    genres: "genreSelect",
+    tags: "tagSelect"
+  };
+
+  const root = document.getElementById(idByField[fieldName]);
+  if (!root?.addValues) return;
+
+  const items = Array.isArray(value)
+    ? value
+    : String(value || "").split(",");
+
+  root.addValues(items);
+}
+
+function resetMultiSelects() {
+  ["relationship", "genres", "tags"].forEach(field => {
+    const idByField = {
+      relationship: "representationSelect",
+      genres: "genreSelect",
+      tags: "tagSelect"
+    };
+
+    document.getElementById(idByField[field])?.clearValues();
+  });
+}
+
+
 /* STATE */
 
 let allMovies = [];
@@ -343,31 +497,96 @@ function parseOMDb(data) {
   };
 }
 
-async function findArtwork(title) {
+
+async function findArtwork(title, requestedYear = "", requestedType = "") {
   title = String(title || "").trim();
   if (!title) return null;
 
   const wanted = normaliseTitle(title);
 
+  const normaliseArtworkType = value => {
+    const type = String(value || "").trim().toLowerCase();
+
+    if (["movie", "film"].includes(type)) return "movie";
+
+    if (
+      ["series", "tv show", "show", "drama", "anime"].includes(type)
+    ) {
+      return "series";
+    }
+
+    return type;
+  };
+
+  const matchesRequestedItem = result => {
+    if (!result?.poster || !result?.title) return false;
+
+    if (normaliseTitle(result.title) !== wanted) return false;
+
+    // Reject different years when both are known.
+    if (
+      requestedYear &&
+      result.year &&
+      Number(requestedYear) !== Number(result.year)
+    ) {
+      return false;
+    }
+
+    // Reject different media types when both are known.
+    const wantedType = normaliseArtworkType(requestedType);
+    const resultType = normaliseArtworkType(result.type);
+
+    if (wantedType && resultType && wantedType !== resultType) {
+      return false;
+    }
+
+    return true;
+  };
+
+  // 1. Try the existing Worker / OMDb lookup.
   try {
+    const params = new URLSearchParams({ title });
+
+    if (requestedYear) {
+      params.set("year", String(requestedYear));
+    }
+
+    if (requestedType) {
+      params.set("type", normaliseArtworkType(requestedType));
+    }
+
     const response = await fetch(
-      `${WORKER_URL}?title=${encodeURIComponent(title)}`,
+      `${WORKER_URL}?${params.toString()}`,
       { cache: "no-store" }
     );
 
     if (response.ok) {
       const result = parseOMDb(await response.json());
 
-      if (
-        result &&
-        result.poster &&
-        normaliseTitle(result.title) === wanted
-      ) {
+      if (matchesRequestedItem(result)) {
         return result;
+      }
+
+      if (result?.poster) {
+        console.warn("Rejected mismatched Worker artwork:", {
+          requested: title,
+          requestedYear,
+          requestedType,
+          found: result.title,
+          foundYear: result.year,
+          foundType: result.type
+        });
       }
     }
   } catch (error) {
     console.warn("OMDb lookup unavailable:", error);
+  }
+
+  // 2. Wikipedia fallback.
+  // Wikipedia results do not reliably identify media type or release year,
+  // so use this fallback only when no year/type was requested.
+  if (requestedYear || requestedType) {
+    return null;
   }
 
   try {
@@ -412,6 +631,7 @@ async function findArtwork(title) {
 
   return null;
 }
+
 
 async function saveMovieToWorker(movie) {
   try {
@@ -774,7 +994,9 @@ function makeCase(movie) {
   return element;
 }
 
-/* RENDER SHELF */
+
+/* RENDER SHELF — INFINITE DISPLAY LOOP */
+let shelfLoopWidth = 0;
 
 function render() {
   filteredMovies = allMovies.filter(matchesFilters);
@@ -783,10 +1005,15 @@ function render() {
     `${filteredMovies.length} ${filteredMovies.length === 1 ? "TITLE" : "TITLES"}`;
 
   rail.innerHTML = "";
+  shelfLoopWidth = 0;
 
-  filteredMovies.forEach(movie => {
-    rail.appendChild(makeCase(movie));
-  });
+  const appendCopy = () => {
+    filteredMovies.forEach(movie => {
+      rail.appendChild(makeCase(movie));
+    });
+  };
+
+  appendCopy();
 
   empty.hidden = filteredMovies.length > 0;
 
@@ -795,7 +1022,258 @@ function render() {
       movie => movie.id === currentMovieId
     );
   }
+
+  // Measure one row before deciding whether to loop it.
+  if (filteredMovies.length > 1) {
+    const first = rail.querySelector(".case");
+    const last = rail.querySelector(".case:last-child");
+
+    if (first && last) {
+      const gap = parseFloat(getComputedStyle(rail).gap) || 0;
+      const rowWidth =
+        last.offsetLeft + last.offsetWidth - first.offsetLeft + gap;
+
+      // Only repeat a shelf long enough to feel continuous.
+      if (rowWidth > 2600) {
+        shelfLoopWidth = rowWidth;
+        rail.innerHTML = "";
+
+        appendCopy();
+        appendCopy();
+        appendCopy();
+
+        requestAnimationFrame(() => {
+          rail.scrollLeft = shelfLoopWidth;
+          updateShelfArrows();
+          updateShelfCurve();
+        });
+      }
+    }
+  }
+
+  if (!shelfLoopWidth) {
+    rail.scrollLeft = 0;
+    requestAnimationFrame(updateShelfCurve);
+  }
+
+  updateShelfArrows();
 }
+
+
+/* FLOATING CASE PREVIEW */
+const rack = rail.closest(".rack");
+const prevArrow = document.getElementById("prev");
+const nextArrow = document.getElementById("next");
+
+const casePreview = document.createElement("aside");
+casePreview.className = "case-preview";
+casePreview.setAttribute("aria-hidden", "true");
+casePreview.innerHTML = `
+  <div class="case-preview-art"></div>
+  <div class="case-preview-copy">
+    <span class="case-preview-meta"></span>
+    <h3 class="case-preview-title"></h3>
+    <p class="case-preview-genres"></p>
+    <span class="case-preview-status"></span>
+  </div>
+`;
+document.body.appendChild(casePreview);
+
+let previewMovieId = null;
+
+function hideCasePreview() {
+  previewMovieId = null;
+  casePreview.classList.remove("visible");
+  casePreview.setAttribute("aria-hidden", "true");
+}
+
+function showCasePreview(element) {
+  if (!element || drag.active) return;
+
+  const movie = filteredMovies.find(
+    item => item.id === element.dataset.id
+  );
+  if (!movie) return;
+
+  previewMovieId = movie.id;
+
+  const art = casePreview.querySelector(".case-preview-art");
+  const meta = casePreview.querySelector(".case-preview-meta");
+  const title = casePreview.querySelector(".case-preview-title");
+  const genres = casePreview.querySelector(".case-preview-genres");
+  const status = casePreview.querySelector(".case-preview-status");
+
+  art.replaceChildren();
+
+  if (movie.poster) {
+    const image = document.createElement("img");
+    image.src = movie.poster;
+    image.alt = "";
+    image.loading = "lazy";
+    image.addEventListener("error", () => {
+      if (previewMovieId === movie.id) image.remove();
+    }, { once: true });
+    art.appendChild(image);
+  } else {
+    const placeholder = document.createElement("div");
+    placeholder.className = "case-preview-placeholder";
+    placeholder.textContent = movie.title;
+    art.appendChild(placeholder);
+  }
+
+  meta.textContent = [
+    movie.type,
+    movie.year
+  ].filter(Boolean).join(" · ");
+
+  title.textContent = movie.title;
+
+  const genreList = Array.isArray(movie.genre)
+    ? movie.genre
+    : Array.isArray(movie.genres)
+      ? movie.genres
+      : movie.genre
+        ? [movie.genre]
+        : movie.genres
+          ? [movie.genres]
+          : [];
+
+  genres.textContent = genreList.filter(Boolean).join(" · ");
+  genres.hidden = genreList.length === 0;
+
+  status.textContent = statusOf(movie) || "";
+  status.hidden = !status.textContent;
+
+  const caseRect = element.getBoundingClientRect();
+  const rackRect = rack.getBoundingClientRect();
+  const previewWidth = Math.min(320, window.innerWidth - 24);
+
+  casePreview.style.width = `${previewWidth}px`;
+
+  const left = Math.max(
+    12,
+    Math.min(
+      caseRect.left + caseRect.width / 2 - previewWidth / 2,
+      window.innerWidth - previewWidth - 12
+    )
+  );
+
+  casePreview.style.left = `${left}px`;
+  casePreview.style.top = `${Math.max(
+    12,
+    Math.min(rackRect.top + 18, window.innerHeight - casePreview.offsetHeight - 12)
+  )}px`;
+  casePreview.classList.add("visible");
+  casePreview.setAttribute("aria-hidden", "false");
+}
+
+rail.addEventListener("pointerover", event => {
+  if (event.pointerType === "touch") return;
+  const element = event.target.closest(".case");
+  if (element && !element.contains(event.relatedTarget)) {
+    showCasePreview(element);
+  }
+});
+
+rail.addEventListener("pointerout", event => {
+  const element = event.target.closest(".case");
+  if (element && !element.contains(event.relatedTarget)) {
+    hideCasePreview();
+  }
+});
+
+rail.addEventListener("focusin", event => {
+  const element = event.target.closest(".case");
+  if (element) showCasePreview(element);
+});
+
+rail.addEventListener("focusout", event => {
+  if (!rail.contains(event.relatedTarget)) hideCasePreview();
+});
+
+
+function updateShelfArrows() {
+  if (shelfLoopWidth > 0) {
+    prevArrow.disabled = false;
+    nextArrow.disabled = false;
+
+    prevArrow.setAttribute("aria-disabled", "false");
+    nextArrow.setAttribute("aria-disabled", "false");
+    return;
+  }
+
+  const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+  const atStart = rail.scrollLeft <= 2;
+  const atEnd = rail.scrollLeft >= maxScroll - 2;
+
+  prevArrow.disabled = atStart;
+  nextArrow.disabled = atEnd;
+
+  prevArrow.setAttribute("aria-disabled", String(atStart));
+  nextArrow.setAttribute("aria-disabled", String(atEnd));
+}
+
+
+rail.addEventListener("scroll", updateShelfArrows, { passive: true });
+
+
+/* Seamless boundary wrapping — no automatic scrolling */
+rail.addEventListener("scroll", () => {
+  if (!shelfLoopWidth) return;
+
+  const leftBoundary = shelfLoopWidth * 0.5;
+  const rightBoundary = shelfLoopWidth * 1.5;
+  let newPosition = null;
+
+  if (rail.scrollLeft < leftBoundary) {
+    newPosition = rail.scrollLeft + shelfLoopWidth;
+  } else if (rail.scrollLeft > rightBoundary) {
+    newPosition = rail.scrollLeft - shelfLoopWidth;
+  }
+
+  if (newPosition !== null) {
+    // Teleport to the equivalent point without smooth-scroll animation.
+    const previousBehavior = rail.style.scrollBehavior;
+    rail.style.scrollBehavior = "auto";
+    rail.scrollLeft = newPosition;
+
+    requestAnimationFrame(() => {
+      rail.style.scrollBehavior = previousBehavior;
+    });
+  }
+}, { passive: true });
+
+
+
+
+/* SCROLL-RESPONSIVE 3D SHELF */
+function updateShelfCurve() {
+  const cases = rail.querySelectorAll(".case");
+  const halfWidth = Math.max(1, rail.clientWidth / 2);
+  const shelfCenter = rail.scrollLeft + halfWidth;
+
+  cases.forEach(element => {
+    // Layout position is stable even when the case is transformed.
+    const caseCenter =
+      element.offsetLeft + element.offsetWidth / 2;
+
+    const distance = Math.max(
+      -1,
+      Math.min(1, (caseCenter - shelfCenter) / halfWidth)
+    );
+
+    const eased = Math.sign(distance) *
+      Math.pow(Math.abs(distance), 1.35);
+
+    element.style.setProperty(
+      "--curve-angle",
+      `${eased * 10}deg`
+    );
+  });
+}
+rail.addEventListener("scroll", updateShelfCurve, { passive: true });
+window.addEventListener("resize", updateShelfCurve);
+window.addEventListener("resize", updateShelfArrows);
 
 /* DETAIL MODAL */
 
@@ -959,23 +1437,86 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-/* RETRIEVE MISSING ARTWORK */
+
+/* RETRIEVE MISSING ARTWORK — VALIDATE BEFORE SAVING */
 
 async function fetchArtworkForExistingMovie(movie) {
-  if (artworkRequestIds.has(movie.id)) return;
+  if (!movie || artworkRequestIds.has(movie.id)) return;
+
+  // Never replace a poster chosen manually by the user.
+  if (movie.posterManuallySet === true) return;
+
+  // This function should only retrieve artwork when the poster is missing.
+  if (movie.poster) return;
 
   artworkRequestIds.add(movie.id);
 
-  try {
-    const found = await findArtwork(movie.title);
-    if (!found) return;
+  const normaliseTypeForArtwork = value => {
+    const type = String(value || "").trim().toLowerCase();
+
+    if (["movie", "film"].includes(type)) return "movie";
 
     if (
-      found.poster &&
-      normaliseTitle(found.title) === normaliseTitle(movie.title)
+      ["series", "tv show", "show", "drama", "anime"].includes(type)
     ) {
-      movie.poster = found.poster;
+      return "series";
     }
+
+    return type;
+  };
+
+  try {
+    const found = await findArtwork(movie.title, movie.year, movie.type);
+
+    if (!found?.poster || !found?.title) return;
+
+    // Require an exact normalized title match.
+    if (
+      normaliseTitle(found.title) !== normaliseTitle(movie.title)
+    ) {
+      console.warn("Rejected mismatched artwork title:", {
+        requested: movie.title,
+        found: found.title
+      });
+      return;
+    }
+
+    // If both years are known, they must match.
+    if (
+      movie.year &&
+      found.year &&
+      Number(movie.year) !== Number(found.year)
+    ) {
+      console.warn("Rejected artwork from a different year:", {
+        title: movie.title,
+        requestedYear: movie.year,
+        foundYear: found.year
+      });
+      return;
+    }
+
+    // If both media types are known, they must match.
+    const requestedType = normaliseTypeForArtwork(movie.type);
+    const foundType = normaliseTypeForArtwork(found.type);
+
+    if (
+      requestedType &&
+      foundType &&
+      requestedType !== foundType
+    ) {
+      console.warn("Rejected artwork from a different media type:", {
+        title: movie.title,
+        requestedType,
+        foundType
+      });
+      return;
+    }
+
+    // Recheck before saving in case the poster was manually changed
+    // while the artwork request was in progress.
+    if (movie.posterManuallySet === true || movie.poster) return;
+
+    movie.poster = found.poster;
 
     if (!movie.description && found.description) {
       movie.description = found.description;
@@ -1015,11 +1556,28 @@ async function fetchArtworkForExistingMovie(movie) {
 }
 
 /* ADD / EDIT MODAL */
+const archiveType = document.getElementById("archiveType");
+const customType = document.getElementById("customType");
+
+function updateCustomType() {
+  const isOther = archiveType.value === "Other";
+  customType.hidden = !isOther;
+  customType.required = isOther;
+
+  if (!isOther) customType.value = "";
+}
+
+archiveType.addEventListener("change", updateCustomType);
+updateCustomType();
 
 function openAddModal() {
+  lastAutoFilledPoster = "";
+  updateAddPosterPreview("");
   editingMovieId = null;
   addForm.reset();
-
+  resetMultiSelects();
+  customType.value = "";
+  updateCustomType();
   document.getElementById("addHeadingTitle").textContent = "Add a story.";
   document.getElementById("addHeadingText").textContent =
     "Find a title or enter its details manually. You can edit everything before saving.";
@@ -1053,9 +1611,11 @@ function openAddModal() {
 }
 
 function openEditModal(movie) {
+  lastAutoFilledPoster = "";
   editingMovieId = movie.id;
   addForm.reset();
-
+  resetMultiSelects();
+  
   document.getElementById("addHeadingTitle").textContent = "Edit this story.";
   document.getElementById("addHeadingText").textContent =
     "Make your changes and save the updated entry.";
@@ -1068,14 +1628,27 @@ function openEditModal(movie) {
   };
 
   set("title", movie.title);
+  const standardTypes = [
+  "Movie", "Series", "Drama", "TV Show",
+  "Anime", "Special", "Other"
+];
+
+if (standardTypes.includes(movie.type)) {
   set("type", movie.type);
+  set("customType", "");
+} else {
+  set("type", "Other");
+  set("customType", movie.type);
+}
+
+updateCustomType();
   set("year", movie.year);
   set("director", movie.director);
   set("language", movie.language);
   set("country", movie.country);
-  set("relationship", movie.relationship);
-  set("genres", asArray(movie.genres).join(", "));
-  set("tags", asArray(movie.tags).join(", "));
+  setMultiSelectValues("relationship", movie.relationship);
+  setMultiSelectValues("genres", movie.genres);
+  setMultiSelectValues("tags", movie.tags);
   set("status", statusOf(movie));
   set("titleStyle", movie.titleStyle);
   set("poster", movie.poster);
@@ -1104,6 +1677,7 @@ function openEditModal(movie) {
   }
 
   movieLookup.value = movie.title;
+  updateAddPosterPreview(movie.poster || "");
   movieSearchStatus.textContent =
     "Editing an existing entry. Searching again can retrieve its artwork.";
 
@@ -1121,17 +1695,40 @@ function closeAddModal() {
 
 /* FIND A TITLE */
 
-function fillEmptyField(name, value) {
-  const field = addForm.elements.namedItem(name);
+let lastAutoFilledPoster = "";
+let lastAutoFilledFields = {};
+let lookupRequestToken = 0;
 
-  if (
-    field &&
-    !String(field.value || "").trim() &&
-    value !== undefined &&
-    value !== ""
-  ) {
-    field.value = value;
+function clearPreviousAutomaticResults() {
+  for (const [name, previousValue] of Object.entries(lastAutoFilledFields)) {
+    const field = addForm.elements.namedItem(name);
+    if (field && String(field.value || "").trim() === previousValue) {
+      field.value = "";
+    }
   }
+
+  lastAutoFilledFields = {};
+
+  const posterField = addForm.elements.namedItem("poster");
+  if (
+    posterField &&
+    lastAutoFilledPoster &&
+    String(posterField.value || "").trim() === lastAutoFilledPoster
+  ) {
+    posterField.value = "";
+    updateAddPosterPreview("");
+  }
+
+  lastAutoFilledPoster = "";
+}
+
+function setAutomaticField(name, value) {
+  const field = addForm.elements.namedItem(name);
+  if (!field || value === undefined || value === null || value === "") return;
+
+  const textValue = String(value);
+  field.value = textValue;
+  lastAutoFilledFields[name] = textValue;
 }
 
 async function lookupMovie() {
@@ -1142,40 +1739,75 @@ async function lookupMovie() {
     return;
   }
 
+  const requestToken = ++lookupRequestToken;
+
+  // Clear only values supplied by the previous automatic search.
+  // Values the user edited manually are preserved.
+  clearPreviousAutomaticResults();
+
   findMovieButton.disabled = true;
   movieSearchStatus.textContent = "Looking for the exact title and artwork…";
 
   try {
-    const found = await findArtwork(title);
+    
+const requestedYear = String(
+  addForm.elements.namedItem("year")?.value || ""
+).trim();
 
-    if (!found) {
-      fillEmptyField("title", title);
+// Don't assume a new title is a movie just because the
+// form defaults to Movie. Search without a type restriction.
+const requestedType = "";
+
+const found = await findArtwork(title, requestedYear, requestedType);
+
+    // Ignore older searches that finish after a newer search.
+    if (requestToken !== lookupRequestToken) return;
+
+    if (!found || !found.title ||
+        normaliseTitle(found.title) !== normaliseTitle(title)) {
+      const titleField = addForm.elements.namedItem("title");
+      if (titleField && !titleField.value.trim()) {
+        titleField.value = title;
+      }
+
+      updateAddPosterPreview("");
       movieSearchStatus.textContent =
-        "No exact artwork match found. You can fill in the details manually.";
+        "No exact title match found. Enter the details manually or try another title.";
       return;
     }
 
-    fillEmptyField("title", found.title || title);
-    fillEmptyField("type", found.type);
-    fillEmptyField("year", found.year);
-    fillEmptyField("director", found.director);
-    fillEmptyField("language", found.language);
-    fillEmptyField("country", found.country);
-    fillEmptyField("duration", found.duration);
-    fillEmptyField("rating", found.rating);
-    fillEmptyField("genres", asArray(found.genres).join(", "));
-    fillEmptyField("description", found.description);
-    fillEmptyField("poster", found.poster);
+    setAutomaticField("title", found.title);
+    setAutomaticField("type", found.type);
+    setAutomaticField("year", found.year);
+    setAutomaticField("director", found.director);
+    setAutomaticField("language", found.language);
+    setAutomaticField("country", found.country);
+    setAutomaticField("duration", found.duration);
+    setAutomaticField("rating", found.rating);
+    setAutomaticField("genres", asArray(found.genres).join(", "));
+    setAutomaticField("description", found.description);
+
+    const posterField = addForm.elements.namedItem("poster");
+
+    if (posterField) {
+      posterField.value = found.poster || "";
+      lastAutoFilledPoster = found.poster || "";
+      updateAddPosterPreview(lastAutoFilledPoster);
+    }
 
     movieSearchStatus.textContent = found.poster
-      ? "Exact title found. Available details have been filled in."
+      ? "Exact title found. Details and poster preview updated."
       : "Title found, but artwork is unavailable. You can still save it.";
   } catch (error) {
+    if (requestToken !== lookupRequestToken) return;
     console.error("Title lookup failed:", error);
+    updateAddPosterPreview("");
     movieSearchStatus.textContent =
-      "Automatic lookup failed. You can still add the title manually.";
+      "Automatic lookup failed. Check the title or enter the details manually.";
   } finally {
-    findMovieButton.disabled = false;
+    if (requestToken === lookupRequestToken) {
+      findMovieButton.disabled = false;
+    }
   }
 }
 
@@ -1195,7 +1827,14 @@ addForm.addEventListener("submit", async event => {
 
   const formData = new FormData(addForm);
   const title = String(formData.get("title") || "").trim();
-  const type = String(formData.get("type") || "Movie").trim();
+  const selectedType = String(formData.get("type") || "Movie").trim();
+const customType = String(formData.get("customType") || "").trim();
+const type = selectedType === "Other" ? customType : selectedType;
+
+if (!type) {
+  alert("Please enter a custom type.");
+  return;
+}
 
   if (!title) {
     alert("Please enter a title.");
@@ -1226,16 +1865,18 @@ addForm.addEventListener("submit", async event => {
   saveButton.textContent = "SAVING…";
 
   try {
-    let posterURL = String(formData.get("poster") || "").trim();
+    const enteredPosterURL = String(formData.get("poster") || "").trim();
+    let posterURL = enteredPosterURL || existing?.poster || "";
 
     if (!posterURL) {
-      const found = await findArtwork(title);
+      const found = await findArtwork(title, year, type);
 
       if (
-        found &&
-        normaliseTitle(found.title) === normaliseTitle(title)
+        found?.poster &&
+        normaliseTitle(found.title) === normaliseTitle(title) &&
+        (!year || !found.year || Number(found.year) === Number(year))
       ) {
-        posterURL = found.poster || "";
+        posterURL = found.poster;
       }
     }
 
@@ -1254,6 +1895,9 @@ addForm.addEventListener("submit", async event => {
       status: String(formData.get("status") || "Want to Watch"),
       titleStyle: String(formData.get("titleStyle") || "elegant"),
       poster: posterURL,
+      posterManuallySet: enteredPosterURL
+        ? enteredPosterURL !== lastAutoFilledPoster
+        : existing?.posterManuallySet === true,
       duration: String(formData.get("duration") || "").trim(),
       rating: String(formData.get("rating") || "").trim(),
       dateWatched: String(formData.get("dateWatched") || "").trim(),
@@ -1316,12 +1960,18 @@ document.getElementById("clearFilters").addEventListener("click", () => {
   render();
 });
 
-document.getElementById("prev").addEventListener("click", () => {
-  rail.scrollBy({ left: -430, behavior: "smooth" });
+prevArrow.addEventListener("click", () => {
+  rail.scrollBy({
+    left: -Math.max(300, rail.clientWidth * 0.75),
+    behavior: "smooth"
+  });
 });
 
-document.getElementById("next").addEventListener("click", () => {
-  rail.scrollBy({ left: 430, behavior: "smooth" });
+nextArrow.addEventListener("click", () => {
+  rail.scrollBy({
+    left: Math.max(300, rail.clientWidth * 0.75),
+    behavior: "smooth"
+  });
 });
 
 document.getElementById("openAdd").addEventListener("click", openAddModal);
@@ -1338,10 +1988,38 @@ addModal.addEventListener("click", event => {
   if (event.target.hasAttribute("data-add-close")) closeAddModal();
 });
 
-/* DRAGGING THE SHELF */
+
+/* DRAGGING THE SHELF — smooth momentum */
+
+let shelfMomentumFrame = null;
+let shelfVelocity = 0;
+let shelfLastX = 0;
+let shelfLastTime = 0;
+
+const stopShelfMomentum = () => {
+  if (shelfMomentumFrame !== null) {
+    cancelAnimationFrame(shelfMomentumFrame);
+    shelfMomentumFrame = null;
+  }
+};
+
+const runShelfMomentum = () => {
+  rail.scrollLeft -= shelfVelocity;
+  shelfVelocity *= 0.94;
+
+  if (Math.abs(shelfVelocity) > 0.35) {
+    shelfMomentumFrame = requestAnimationFrame(runShelfMomentum);
+  } else {
+    shelfMomentumFrame = null;
+    shelfVelocity = 0;
+  }
+};
 
 rail.addEventListener("pointerdown", event => {
   if (event.pointerType === "mouse" && event.button !== 0) return;
+
+  stopShelfMomentum();
+  shelfVelocity = 0;
 
   const target = event.target.closest(".case");
 
@@ -1353,6 +2031,9 @@ rail.addEventListener("pointerdown", event => {
     pointerId: event.pointerId,
     target
   };
+
+  shelfLastX = event.clientX;
+  shelfLastTime = performance.now();
 
   rail.classList.add("dragging");
 
@@ -1371,38 +2052,70 @@ rail.addEventListener("pointermove", event => {
   }
 
   rail.scrollLeft = drag.startScroll - distance;
+
+  const now = performance.now();
+  const elapsed = now - shelfLastTime;
+
+  if (elapsed > 0) {
+    const instantVelocity =
+      (event.clientX - shelfLastX) / elapsed;
+
+    shelfVelocity = instantVelocity * 16;
+  }
+
+  shelfLastX = event.clientX;
+  shelfLastTime = now;
 });
 
-rail.addEventListener("pointerup", event => {
+const finishShelfDrag = event => {
   if (!drag.active) return;
 
   const wasClick = !drag.moved;
   const clickedCase = drag.target;
+  const pointerId = drag.pointerId;
 
   drag.active = false;
   rail.classList.remove("dragging");
 
   try {
-    rail.releasePointerCapture(event.pointerId);
+    if (rail.hasPointerCapture(pointerId)) {
+      rail.releasePointerCapture(pointerId);
+    }
   } catch {}
 
   if (wasClick && clickedCase) {
+    shelfVelocity = 0;
     openDetail(clickedCase.dataset.id);
+    return;
   }
 
   if (drag.moved) {
-    setTimeout(() => {
-      drag.moved = false;
-    }, 120);
+    drag.moved = false;
   }
-});
+
+  // A quick release glides; a slow release settles almost immediately.
+  shelfVelocity = Math.max(-22, Math.min(22, shelfVelocity));
+
+  if (Math.abs(shelfVelocity) > 1) {
+    shelfMomentumFrame = requestAnimationFrame(runShelfMomentum);
+  } else {
+    shelfVelocity = 0;
+  }
+};
+
+rail.addEventListener("pointerup", finishShelfDrag);
 
 rail.addEventListener("pointercancel", event => {
+  if (!drag.active) return;
+
   drag.active = false;
+  shelfVelocity = 0;
   rail.classList.remove("dragging");
 
   try {
-    rail.releasePointerCapture(event.pointerId);
+    if (rail.hasPointerCapture(event.pointerId)) {
+      rail.releasePointerCapture(event.pointerId);
+    }
   } catch {}
 });
 
@@ -1559,17 +2272,83 @@ async function loadMovies() {
   hydrateMissingArtwork();
 }
 
+
 async function hydrateMissingArtwork() {
   for (const movie of allMovies) {
-    if (movie.poster) continue;
+    // Never replace a manually selected poster.
+    if (movie.posterManuallySet === true || movie.poster) {
+      continue;
+    }
 
     try {
-      const found = await findArtwork(movie.title);
+      const found = await findArtwork(
+        movie.title,
+        movie.year,
+        movie.type
+      );
 
+      if (!found?.poster || !found?.title) {
+        continue;
+      }
+
+      // Require an exact title match.
       if (
-        !found?.poster ||
         normaliseTitle(found.title) !== normaliseTitle(movie.title)
       ) {
+        console.warn("Rejected mismatched artwork title:", {
+          requested: movie.title,
+          found: found.title
+        });
+        continue;
+      }
+
+      // Reject a different year when both years are known.
+      if (
+        movie.year &&
+        found.year &&
+        Number(movie.year) !== Number(found.year)
+      ) {
+        console.warn("Rejected artwork from a different year:", {
+          title: movie.title,
+          requestedYear: movie.year,
+          foundYear: found.year
+        });
+        continue;
+      }
+
+      // Compare media types when both are available.
+      const normaliseType = value => {
+        const type = String(value || "").trim().toLowerCase();
+
+        if (["movie", "film"].includes(type)) return "movie";
+
+        if (
+          ["series", "tv show", "show", "drama", "anime"].includes(type)
+        ) {
+          return "series";
+        }
+
+        return type;
+      };
+
+      const wantedType = normaliseType(movie.type);
+      const foundType = normaliseType(found.type);
+
+      if (
+        wantedType &&
+        foundType &&
+        wantedType !== foundType
+      ) {
+        console.warn("Rejected artwork from a different media type:", {
+          title: movie.title,
+          wantedType,
+          foundType
+        });
+        continue;
+      }
+
+      // Check again before saving.
+      if (movie.posterManuallySet === true || movie.poster) {
         continue;
       }
 

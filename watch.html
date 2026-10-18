@@ -119,15 +119,24 @@
 
         <input name="poster" type="hidden">
 
+        <div id="addPosterPreview" class="add-poster-preview" hidden>
+          <span class="add-poster-preview-label">POSTER PREVIEW</span>
+          <div class="add-poster-preview-content">
+            <img id="addPosterPreviewImage" alt="Poster preview">
+            <p id="addPosterPreviewMessage">No poster selected yet.</p>
+          </div>
+        </div>
+
         <div class="form-grid">
           <label>
             TITLE
             <input name="title" type="text" required>
           </label>
 
+          
           <label>
             TYPE
-            <select name="type">
+            <select name="type" id="archiveType">
               <option>Movie</option>
               <option>Series</option>
               <option>Drama</option>
@@ -136,6 +145,9 @@
               <option>Special</option>
               <option>Other</option>
             </select>
+            <input name="customType" id="customType"
+                   type="text" placeholder="Enter your type"
+                   hidden>
           </label>
 
           <label>
@@ -158,23 +170,95 @@
             <input name="country" type="text">
           </label>
 
-          <label>
+          <label class="wide">
             REPRESENTATION
-            <input name="relationship" type="text"
-                   placeholder="M/F · F/F · M/M · GL · BL">
+            <div class="multi-select" id="representationSelect"
+                 data-field="relationship">
+              <div class="multi-selected"></div>
+              <select class="multi-options"
+                      aria-label="Choose representation">
+                <option value="">Choose a representation…</option>
+                <option>M/F</option>
+                <option>F/F</option>
+                <option>M/M</option>
+                <option>GL</option>
+                <option>BL</option>
+                <option>Queer</option>
+                <option>LGBTQ+</option>
+                <option>Other</option>
+              </select>
+              <div class="multi-custom">
+                <input type="text" placeholder="Add a custom representation">
+                <button type="button" class="multi-add">ADD</button>
+              </div>
+              <input type="hidden" name="relationship">
+            </div>
           </label>
 
-          <label>
+          <label class="wide">
             GENRES
-            <input name="genres" type="text"
-                   placeholder="Romance, Drama, Thriller">
+            <div class="multi-select" id="genreSelect"
+                 data-field="genres">
+              <div class="multi-selected"></div>
+              <select class="multi-options" aria-label="Choose genres">
+                <option value="">Choose a genre…</option>
+                <option>Action</option>
+                <option>Adventure</option>
+                <option>Animation</option>
+                <option>Comedy</option>
+                <option>Crime</option>
+                <option>Documentary</option>
+                <option>Drama</option>
+                <option>Fantasy</option>
+                <option>Historical</option>
+                <option>Horror</option>
+                <option>Mystery</option>
+                <option>Psychological</option>
+                <option>Romance</option>
+                <option>Sci-Fi</option>
+                <option>Slice of Life</option>
+                <option>Sports</option>
+                <option>Supernatural</option>
+                <option>Thriller</option>
+                <option>Other</option>
+              </select>
+              <div class="multi-custom">
+                <input type="text" placeholder="Add a custom genre">
+                <button type="button" class="multi-add">ADD</button>
+              </div>
+              <input type="hidden" name="genres">
+            </div>
           </label>
 
-          <label>
+          <label class="wide">
             TAGS
-            <input name="tags" type="text"
-                   placeholder="slow burn, comfort, tragic">
+            <div class="multi-select" id="tagSelect"
+                 data-field="tags">
+              <div class="multi-selected"></div>
+              <select class="multi-options" aria-label="Choose tags">
+                <option value="">Choose a tag…</option>
+                <option>Slow burn</option>
+                <option>Comfort</option>
+                <option>Tragic</option>
+                <option>Coming of Age</option>
+                <option>Found Family</option>
+                <option>Enemies to Lovers</option>
+                <option>Friends to Lovers</option>
+                <option>Angst</option>
+                <option>Happy Ending</option>
+                <option>Sad Ending</option>
+                <option>Rewatch</option>
+                <option>Favourite</option>
+                <option>Other</option>
+              </select>
+              <div class="multi-custom">
+                <input type="text" placeholder="Add a custom tag">
+                <button type="button" class="multi-add">ADD</button>
+              </div>
+              <input type="hidden" name="tags">
+            </div>
           </label>
+
 
           <label>
             STATUS
@@ -375,3 +459,4 @@
 </body>
 </html>
 
+ 
